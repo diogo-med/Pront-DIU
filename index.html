@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f766e" />
+  <meta name="description" content="PWA para preenchimento da ficha clínica de consulta de enfermagem para inserção do DIU." />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/icon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>ProntuarioDIU</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">ProntuarioDIU</p>
+        <h1>Ficha clínica de consulta de enfermagem para inserção do DIU</h1>
+        <p class="lead">Base de PWA para registrar a investigação, o procedimento, o diagnóstico e as intervenções com salvamento local no navegador.</p>
+      </div>
+      <div class="hero-card">
+        <div class="hero-actions">
+          <button type="button" class="secondary" id="newRecordBtn">Novo prontuário</button>
+          <button type="button" class="primary" id="printBtn">Imprimir (PDF)</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="notice">
+        <strong>Auto-salvamento local ativado.</strong>
+        <span>Os dados ficam no dispositivo até que sejam exportados, impressos ou limpos manualmente.</span>
+      </section>
+
+      <form id="diuForm" class="record-form" autocomplete="off">
+        <section class="card">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">1. Investigação</p>
+              <h2>Dados gerais e anamnese</h2>
+            </div>
+            <div class="inline-field compact">
+              <label for="teletriageDate">Data da teletriagem</label>
+              <input type="date" id="teletriageDate" name="teletriageDate" />
+            </div>
+          </div>
+
+          <div class="grid two-cols">
+            <label>Data do atendimento<input type="date" name="attendanceDate" /></label>
+            <label>N° do prontuário<input type="text" name="recordNumber" placeholder="Digite o número" /></label>
+            <label class="span-2">Nome<input type="text" name="patientName" /></label>
+            <label>Data de nascimento<input type="date" name="birthDate" /></label>
+            <label>Idade<input type="number" name="age" min="0" /></label>
+            <label>RG<input type="text" name="rg" /></label>
+            <label>CPF<input type="text" name="cpf" /></label>
+            <label>CNS<input type="text" name="cns" /></label>
+            <label>Religião<input type="text" name="religion" /></label>
+            <label>Telefone<input type="tel" name="phone" /></label>
+            <label>Profissão/Ocupação<input type="text" name="occupation" /></label>
+            <label>Cor/raça<input type="text" name="race" placeholder="P, P, Q, B, A, I" /></label>
+            <label>Escolaridade<input type="text" name="education" /></label>
+            <label>PcD<input type="text" name="disability" /></label>
+            <label class="span-2">Endereço<textarea name="address" rows="2"></textarea></label>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">1.2</p>
+              <h2>Motivação para inserção do DIU</h2>
+            </div>
+          </div>
+          <div class="check-grid">
+            <label><input type="checkbox" name="motivation" value="Contracepção" /> Contracepção</label>
+            <label><input type="checkbox" name="motivation" value="SUA" /> SUA</label>
+            <label><input type="checkbox" name="motivation" value="Dor Pélvica" /> Dor Pélvica</label>
+            <label><input type="checkbox" name="motivation" value="Mioma" /> Mioma</label>
+            <label><input type="checkbox" name="motivation" value="TH" /> TH</label>
+            <label><input type="checkbox" name="motivation" value="Endometriose" /> Endometriose</label>
+            <label><input type="checkbox" name="motivation" value="Doença hematológica" /> Doença hematológica</label>
+            <label><input type="checkbox" name="motivation" value="Transplantada" /> Transplantada (Fígado/Rim/Medula)</label>
+            <label class="span-2 inline-field"><span>Outras</span><input type="text" name="motivationOther" /></label>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">1.3</p>
+              <h2>Antecedentes pessoais e ginecológicos</h2>
+            </div>
+          </div>
+
+          <div class="grid two-cols">
+            <label class="span-2">Condições de saúde<textarea name="healthConditions" rows="3"></textarea></label>
+            <label class="span-2">Uso de medicamentos<textarea name="medications" rows="3"></textarea></label>
+            <label>DUM<input type="date" name="dum" /></label>
+            <label>Coitarca<input type="text" name="coitarca" /></label>
+            <div class="field-group">
+              <span>Dismenorreia</span>
+              <label><input type="radio" name="dysmenorrhea" value="Sim" /> Sim</label>
+              <label><input type="radio" name="dysmenorrhea" value="Não" /> Não</label>
+            </div>
+            <div class="field-group">
+              <span>Ciclos menstruais</span>
+              <label><input type="radio" name="cycles" value="Regulares" /> Regulares</label>
+              <label><input type="radio" name="cycles" value="Irregulares" /> Irregulares</label>
+            </div>
+            <label>Fluxo/ciclo<input type="text" name="flowCycle" placeholder="___/___ dias" /></label>
+            <label class="span-2">Padrão de sangramento/spotting (90 dias)
+              <select name="bleedingPattern">
+                <option value="">Selecione</option>
+                <option>Amenorreia</option>
+                <option>Sangramento infrequente (3 dias)</option>
+                <option>Frequência normal (3 a 5 dias)</option>
+                <option>Sangramento prolongado (ininterrupto – 14 dias)</option>
+              </select>
+            </label>
+            <div class="field-group">
+              <span>Anemia</span>
+              <label><input type="radio" name="anemia" value="Sim" /> Sim</label>
+              <label><input type="radio" name="anemia" value="Não" /> Não</label>
+            </div>
+            <label class="span-2">Cirurgias ginecológicas<textarea name="gynSurgeries" rows="3"></textarea></label>
+          </div>
+
+          <div class="grid two-cols spaced-top">
+            <div class="field-group span-2">
+              <span>Método anticoncepcional atual</span>
+              <label><input type="radio" name="currentMethod" value="MAC" /> MAC</label>
+              <label class="inline-field small"><span>Qual</span><input type="text" name="currentMethodWhich" /></label>
+              <label><input type="radio" name="currentMethod" value="Injetável mensal" /> Injetável mensal</label>
+              <label><input type="radio" name="currentMethod" value="Injetável trimestral" /> Injetável trimestral</label>
+              <label class="inline-field small"><span>Preservativo - modo</span><input type="text" name="condomMode" /></label>
+              <label><input type="radio" name="currentMethod" value="LAM" /> LAM</label>
+              <label class="inline-field small"><span>Outro</span><input type="text" name="currentMethodOther" /></label>
+            </div>
+            <div class="field-group span-2">
+              <span>Parcerias sexuais recentes (3 meses)</span>
+              <label><input type="radio" name="recentPartners" value="Sim" /> Sim</label>
+              <label><input type="radio" name="recentPartners" value="Não" /> Não</label>
+            </div>
+            <div class="field-group"><span>História de IST</span><label><input type="radio" name="stiHistory" value="Sim" /> Sim</label><label><input type="radio" name="stiHistory" value="Não" /> Não</label></div>
+            <div class="field-group"><span>IST ativa</span><label><input type="radio" name="activeSti" value="Sim" /> Sim</label><label><input type="radio" name="activeSti" value="Não" /> Não</label></div>
+            <div class="field-group"><span>Alto risco de IST</span><label><input type="radio" name="highStiRisk" value="Sim" /> Sim</label><label><input type="radio" name="highStiRisk" value="Não" /> Não</label></div>
+            <div class="field-group"><span>HIV/AIDS</span><label><input type="radio" name="hiv" value="Sim" /> Sim</label><label><input type="radio" name="hiv" value="Não" /> Não</label></div>
+            <div class="field-group"><span>Antirretrovirais</span><label><input type="radio" name="antiretroviral" value="Sim" /> Sim</label><label><input type="radio" name="antiretroviral" value="Não" /> Não</label></div>
+            <label class="span-2">Se uso de antirretroviral, qual?<input type="text" name="antiretroviralWhich" /></label>
+            <div class="field-group"><span>DIPA nos últimos 3 meses</span><label><input type="radio" name="dipa" value="Sim" /> Sim</label><label><input type="radio" name="dipa" value="Não" /> Não</label></div>
+            <div class="field-group"><span>Miomatose uterina volumosa</span><label><input type="radio" name="largeMyoma" value="Sim" /> Sim</label><label><input type="radio" name="largeMyoma" value="Não" /> Não</label></div>
+            <div class="field-group"><span>Câncer cervical</span><label><input type="radio" name="cervicalCancer" value="Sim" /> Sim</label><label><input type="radio" name="cervicalCancer" value="Não" /> Não</label></div>
+            <label>Última C.O.<input type="date" name="lastCo" /></label>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">1.4</p>
+              <h2>Antecedentes obstétricos</h2>
+            </div>
+          </div>
+          <div class="grid two-cols">
+            <label>Gesta<input type="text" name="gesta" /></label>
+            <label>Para<input type="text" name="para" /></label>
+            <label>Abortos<input type="text" name="abortions" /></label>
+            <label>Cesáreas<input type="text" name="cesareans" /></label>
+            <label>Data do último parto<input type="date" name="lastBirthDate" /></label>
+            <label>Data do último aborto<input type="date" name="lastAbortionDate" /></label>
+            <div class="field-group span-2"><span>Infecção pós-parto ou pós-aborto</span><label><input type="radio" name="postInfection" value="Sim" /> Sim</label><label><input type="radio" name="postInfection" value="Não" /> Não</label></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">1.5</p>
+              <h2>Escolha contraceptiva</h2>
+            </div>
+          </div>
+          <div class="grid two-cols">
+            <div class="field-group span-2">
+              <span>DIU escolhido</span>
+              <label><input type="radio" name="chosenIud" value="Tcu" /> TCu</label>
+              <label><input type="radio" name="chosenIud" value="Levonorgestrel" /> Levonorgestrel</label>
+            </div>
+            <div class="field-group span-2"><span>Informada sobre contraindicações e efeitos do DIU?</span><label><input type="radio" name="informed" value="Sim" /> Sim</label><label><input type="radio" name="informed" value="Não" /> Não</label></div>
+            <label>Elegibilidade para o DIU<input type="text" name="eligibility" placeholder="1/2 ou 3/4" /></label>
+            <label>Data da inserção<input type="date" name="insertionDate" /></label>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">1.6</p>
+              <h2>Exame físico</h2>
+            </div>
+          </div>
+          <div class="grid two-cols">
+            <label>Peso (kg)<input type="number" step="0.1" name="weight" /></label>
+            <label>Altura (cm)<input type="number" step="0.1" name="height" /></label>
+            <label>PA<input type="text" name="bloodPressure" placeholder="___x___ mmHg" /></label>
+            <label>IMC<input type="text" name="bmi" /></label>
+            <div class="field-group span-2"><span>Exame pélvico</span><label><input type="radio" name="pelvicExam" value="Normal" /> Normal</label><label><input type="radio" name="pelvicExam" value="Anormal" /> Anormal</label></div>
+            <div class="field-group span-2"><span>Cervicite purulenta</span><label><input type="radio" name="purulentCervicitis" value="Sim" /> Sim</label><label><input type="radio" name="purulentCervicitis" value="Não" /> Não</label></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">1.7</p>
+              <h2>Inserção do DIU</h2>
+            </div>
+          </div>
+          <div class="grid two-cols">
+            <div class="field-group"><span>Inserção</span><label><input type="radio" name="insertionType" value="Fácil" /> Fácil</label><label><input type="radio" name="insertionType" value="Difícil" /> Difícil</label><label><input type="radio" name="insertionType" value="Não Realizada" /> Não realizada</label></div>
+            <div class="field-group"><span>Dilatação de canal cervical</span><label><input type="radio" name="cervicalDilation" value="Sim" /> Sim</label><label><input type="radio" name="cervicalDilation" value="Não" /> Não</label></div>
+            <label>Escala de dor<input type="text" name="painScale" /></label>
+            <div class="field-group"><span>Momento</span><label><input type="radio" name="moment" value="Pinça de Pozzi" /> Pinça de Pozzi</label><label><input type="radio" name="moment" value="Histerometria" /> Histerometria</label><label><input type="radio" name="moment" value="Inserção de DIU" /> Inserção de DIU</label><label class="inline-field small"><span>Outro</span><input type="text" name="momentOther" /></label></div>
+            <label>Histerometria (cm)<input type="text" name="hysterometry" /></label>
+            <div class="field-group"><span>Uso de analgesia</span><label><input type="checkbox" name="analgesiaGel" /> Gel</label><label><input type="checkbox" name="analgesiaSpray" /> Spray</label><label><input type="checkbox" name="analgesiaInjectable" /> Injetável</label></div>
+            <div class="field-group"><span>Gel</span><label><input type="radio" name="gelUsed" value="Sim" /> Sim</label><label><input type="radio" name="gelUsed" value="Não" /> Não</label></div>
+            <div class="field-group"><span>Spray</span><label><input type="radio" name="sprayUsed" value="Sim" /> Sim</label><label><input type="radio" name="sprayUsed" value="Não" /> Não</label></div>
+            <div class="field-group"><span>Injetável</span><label><input type="radio" name="injectableUsed" value="Sim" /> Sim</label><label><input type="radio" name="injectableUsed" value="Não" /> Não</label></div>
+            <div class="field-group"><span>Posição do útero</span><label><input type="radio" name="uterusPosition" value="AVF" /> AVF</label><label><input type="radio" name="uterusPosition" value="RVF" /> RVF</label><label><input type="radio" name="uterusPosition" value="Outro" /> Outro</label><label class="inline-field small"><span>Especificar</span><input type="text" name="uterusPositionOther" /></label></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">1.8</p>
+              <h2>Intercorrências</h2>
+            </div>
+          </div>
+          <div class="check-grid">
+            <label><input type="checkbox" name="intercurrences" value="Reação vasovagal" /> Reação vasovagal</label>
+            <label><input type="checkbox" name="intercurrences" value="Cólicas/dor exacerbada" /> Cólicas/dor exacerbada</label>
+            <label><input type="checkbox" name="intercurrences" value="Perfuração uterina" /> Perfuração uterina</label>
+            <label><input type="checkbox" name="intercurrences" value="Sangramento importante" /> Sangramento importante</label>
+            <label><input type="checkbox" name="intercurrences" value="DIU não inserido" /> DIU não inserido</label>
+            <label><input type="checkbox" name="intercurrences" value="Sem intercorrências" /> Sem intercorrências</label>
+            <label class="span-2 inline-field"><span>Motivo do não inserido</span><input type="text" name="notInsertedReason" /></label>
+            <label class="span-2 inline-field"><span>Outras</span><input type="text" name="otherIntercurrences" /></label>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">2, 3 e 4</p>
+              <h2>Diagnóstico, resultados e intervenções</h2>
+            </div>
+          </div>
+
+          <div class="grid two-cols">
+            <div>
+              <h3>Diagnóstico de enfermagem</h3>
+              <div class="check-list">
+                <label><input type="checkbox" name="diagnosis" value="Planejamento familiar ineficaz" /> Planejamento familiar ineficaz</label>
+                <label><input type="checkbox" name="diagnosis" value="Risco de gestação não intencional" /> Risco de gestação não intencional</label>
+                <label><input type="checkbox" name="diagnosis" value="Planejamento familiar prejudicado" /> Planejamento familiar prejudicado</label>
+                <label><input type="checkbox" name="diagnosis" value="Falta de conhecimento sobre contracepção" /> Falta de conhecimento sobre contracepção</label>
+                <label><input type="checkbox" name="diagnosis" value="Adesão ao regime medicamentoso insuficiente" /> Adesão ao regime medicamentoso insuficiente</label>
+                <label><input type="checkbox" name="diagnosis" value="Não adesão ao regime medicamentoso" /> Não adesão ao regime medicamentoso</label>
+                <label><input type="checkbox" name="diagnosis" value="Capacidade para proteção prejudicada" /> Capacidade para proteção prejudicada</label>
+                <label class="inline-field"><span>Outro</span><input type="text" name="diagnosisOther" /></label>
+              </div>
+            </div>
+
+            <div>
+              <h3>Resultados</h3>
+              <div class="check-list">
+                <label><input type="checkbox" name="results" value="Manejo adequado do método contraceptivo escolhido" /> Manejo adequado do método contraceptivo escolhido</label>
+                <label class="inline-field"><span>Outro</span><input type="text" name="resultsOther" /></label>
+              </div>
+
+              <h3 class="spaced-top-sm">Intervenções</h3>
+              <div class="check-list">
+                <label><input type="checkbox" name="interventions" value="Anti-inflamatório não-hormonal" /> Anti-inflamatório não-hormonal</label>
+                <label><input type="checkbox" name="interventions" value="USG (40 dias)" /> USG (40 dias)</label>
+                <label><input type="checkbox" name="interventions" value="Analgésico" /> Analgésico</label>
+                <label><input type="checkbox" name="interventions" value="Calor local" /> Calor local</label>
+                <label><input type="checkbox" name="interventions" value="Orientar sobre os métodos contraceptivos disponíveis e indicados" /> Orientar sobre os métodos contraceptivos disponíveis e indicados</label>
+                <label><input type="checkbox" name="interventions" value="Agendar consulta de acompanhamento" /> Agendar consulta de acompanhamento</label>
+                <label class="inline-field"><span>Data do acompanhamento</span><input type="date" name="followUpDate" /></label>
+                <label><input type="checkbox" name="interventions" value="Apoiar o processo de tomada de decisão quanto ao método escolhido" /> Apoiar o processo de tomada de decisão quanto ao método escolhido</label>
+                <label class="span-2 inline-field"><span>Outras</span><textarea name="interventionsOther" rows="3"></textarea></label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="grid two-cols">
+            <label>Local<input type="text" name="location" /></label>
+            <label>Data<input type="date" name="documentDate" /></label>
+          </div>
+        </section>
+
+        <section class="form-actions card">
+          <button type="button" class="secondary" id="clearBtn">Limpar formulário</button>
+          <button type="button" class="secondary" id="saveBtn">Salvar rascunho</button>
+          <button type="submit" class="primary">Salvar prontuário</button>
+        </section>
+      </form>
+    </main>
+  </div>
+
+  <template id="toastTemplate">
+    <div class="toast"></div>
+  </template>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>

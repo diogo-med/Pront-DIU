@@ -1,0 +1,17 @@
+{
+  "name": "ProntuarioDIU",
+  "short_name": "ProntuarioDIU",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#f3f7f6",
+  "theme_color": "#0f766e",
+  "description": "PWA para preenchimento da ficha clínica de consulta de enfermagem para inserção do DIU.",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

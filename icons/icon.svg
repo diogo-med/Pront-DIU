@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">ProntDIU</title>
+  <desc id="desc">Ícone com cruz de saúde e círculo central em tons verdes.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f766e" />
+      <stop offset="100%" stop-color="#115e59" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)" />
+  <circle cx="256" cy="256" r="172" fill="rgba(255,255,255,0.13)" />
+  <path d="M240 132h32c13.255 0 24 10.745 24 24v72h72c13.255 0 24 10.745 24 24v32c0 13.255-10.745 24-24 24h-72v72c0 13.255-10.745 24-24 24h-32c-13.255 0-24-10.745-24-24v-72h-72c-13.255 0-24-10.745-24-24v-32c0-13.255 10.745-24 24-24h72v-72c0-13.255 10.745-24 24-24z" fill="#f8fafc" opacity="0.96" />
+  <circle cx="256" cy="256" r="48" fill="#f97316" opacity="0.95" />
+</svg>
