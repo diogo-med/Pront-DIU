@@ -6,37 +6,37 @@
   <meta name="theme-color" content="#7c3aed" />
   <meta name="description" content="PWA para preenchimento da ficha clínica de consulta de enfermagem para inserção do DIU." />
   <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="icon" href="icons/icon.png" type="image/png+xml" />
+  <link rel="icon" href="icons/icon.png" type="image/png" />
   <link rel="apple-touch-icon" href="icons/icon.png" />
   <link rel="stylesheet" href="styles.css" />
   <title>Prontuario-DIU</title>
 </head>
 <body>
   <div class="app-shell">
-    <header class="hero">
-      <div>
-        <p class="eyebrow">Prontuario-DIU</p>
-        <h1>Ficha clínica de consulta de enfermagem para inserção do DIU</h1>
-        <p class="lead">Base de PWA para registrar a investigação, o procedimento, o diagnóstico e as intervenções com salvamento local no navegador.</p>
+    
+    <header class="hero" style="display: block; width: 100%; padding: 2rem 1rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 2.5rem;">
+        <p class="eyebrow" style="margin: 0;">Prontuario-DIU</p>
+        <div class="hero-actions utility-actions" style="margin: 0; display: flex; gap: 10px;">
+          <a href="records.html" class="secondary" id="recordsBtn">Prontuários</a>
+          <button type="button" class="primary" id="newRecordBtn">Novo prontuário</button>
+        </div>
       </div>
-      <div class="hero-actions utility-actions">
-        <a href="records.html" class="secondary" id="recordsBtn">Prontuários</a>
-        <button type="button" class="primary" id="newRecordBtn">Novo prontuário</button>
-      </div>
+      
+      <h1 style="text-align: center; margin: 0; width: 100%; max-width: none;">Ficha clínica de consulta de enfermagem para inserção do DIU</h1>
     </header>
 
     <main class="content">
       <section id="formView" class="view">
         <section class="notice">
-          <strong>Auto-salvamento local ativado.</strong>
-          <span>Os dados ficam no dispositivo até que sejam salvos, impressos ou limpos manualmente.</span>
+          <p class="section-kicker">1. Investigação</p>
         </section>
 
         <form id="diuForm" class="record-form" autocomplete="off">
         <section class="card">
           <div class="section-head">
             <div>
-              <p class="section-kicker">1. Investigação</p>
+              <p class="section-kicker">1.1</p>
               <h2>Dados gerais e anamnese</h2>
             </div>
             <div class="inline-field compact">
@@ -115,7 +115,8 @@
             </div>
             
             <label><strong>Fluxo/ciclo</strong><input type="text" name="flowCycle" placeholder="___/___ dias" /></label>
-            <label class="span-2"><strong>Padrão de sangramento/spotting (90 dias)</strong>
+            
+            <label><strong>Padrão de sangramento/spotting (90 dias)</strong>
               <select name="bleedingPattern">
                 <option value="">Selecione</option>
                 <option>Amenorreia</option>
@@ -137,20 +138,35 @@
           </div>
 
           <div class="grid two-cols spaced-top">
+            
             <div class="span-2">
-              <strong style="display: block; margin-bottom: 5px;">Método anticoncepcional atual</strong>
-              <div class="field-group" style="flex-wrap: wrap;">
-                <label><input type="radio" name="currentMethod" value="MAC" /> MAC</label>
-                <label class="inline-field small"><strong>Qual</strong><input type="text" name="currentMethodWhich" /></label>
-                <label><input type="radio" name="currentMethod" value="Injetável mensal" /> Injetável mensal</label>
-                <label><input type="radio" name="currentMethod" value="Injetável trimestral" /> Injetável trimestral</label>
-                <label class="inline-field small"><strong>Preservativo - modo</strong><input type="text" name="condomMode" /></label>
-                <label><input type="radio" name="currentMethod" value="LAM" /> LAM</label>
-                <label class="inline-field small"><strong>Outro</strong><input type="text" name="currentMethodOther" /></label>
+              <strong style="display: block; margin-bottom: 10px;">Método anticoncepcional atual</strong>
+              <div class="field-group" style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
+                
+                <div style="display: flex; align-items: center; gap: 15px; width: 100%;">
+                  <label style="display: flex; flex-direction: row; align-items: center; min-width: 150px; margin: 0;"><input type="radio" name="currentMethod" value="MAC" style="margin-right: 8px;" /> MAC</label>
+                  <label class="inline-field small" style="margin: 0; display: flex; flex-direction: row; align-items: center; gap: 8px;"><strong>Qual</strong><input type="text" name="currentMethodWhich" /></label>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 15px; width: 100%;">
+                  <label style="display: flex; flex-direction: row; align-items: center; min-width: 150px; margin: 0;"><input type="radio" name="currentMethod" value="Preservativo" style="margin-right: 8px;" /> Preservativo</label>
+                  <label class="inline-field small" style="margin: 0; display: flex; flex-direction: row; align-items: center; gap: 8px;"><strong>Modo</strong><input type="text" name="condomMode" /></label>
+                </div>
+                
+                <label style="display: flex; flex-direction: row; align-items: center; margin: 0;"><input type="radio" name="currentMethod" value="Injetável mensal" style="margin-right: 8px;" /> Injetável mensal</label>
+                
+                <label style="display: flex; flex-direction: row; align-items: center; margin: 0;"><input type="radio" name="currentMethod" value="Injetável trimestral" style="margin-right: 8px;" /> Injetável trimestral</label>
+                
+                <label style="display: flex; flex-direction: row; align-items: center; margin: 0;"><input type="radio" name="currentMethod" value="LAM" style="margin-right: 8px;" /> LAM</label>
+                
+                <div style="display: flex; align-items: center; gap: 15px; width: 100%; margin-top: 4px;">
+                  <strong style="min-width: 150px;">Outro</strong>
+                  <input type="text" name="currentMethodOther" style="max-width: 300px; flex: 1;" />
+                </div>
               </div>
             </div>
             
-            <div class="span-2">
+            <div>
               <strong style="display: block; margin-bottom: 5px;">Parcerias sexuais recentes (3 meses)</strong>
               <div class="field-group">
                 <label><input type="radio" name="recentPartners" value="Sim" /> Sim</label>
@@ -190,15 +206,20 @@
               </div>
             </div>
             
-            <div>
-              <strong style="display: block; margin-bottom: 5px;">Antirretrovirais</strong>
-              <div class="field-group">
-                <label><input type="radio" name="antiretroviral" value="Sim" /> Sim</label>
-                <label><input type="radio" name="antiretroviral" value="Não" /> Não</label>
+            <!-- Antirretroviral unificado em um único field-group -->
+            <div class="span-2">
+              <strong style="display: block; margin-bottom: 5px;">Antirretroviral</strong>
+              <div class="field-group" style="display: flex; flex-direction: column; gap: 10px; align-items: flex-start;">
+                <div style="display: flex; gap: 15px;">
+                  <label><input type="radio" name="antiretroviral" value="Sim" /> Sim</label>
+                  <label><input type="radio" name="antiretroviral" value="Não" /> Não</label>
+                </div>
+                <label style="width: 100%; margin: 0;">
+                  <strong style="display: block; margin-bottom: 5px;">Se uso de antirretroviral, qual?</strong>
+                  <input type="text" name="antiretroviralWhich" style="width: 100%;" />
+                </label>
               </div>
             </div>
-            
-            <label class="span-2"><strong>Se uso de antirretroviral, qual?</strong><input type="text" name="antiretroviralWhich" /></label>
             
             <div>
               <strong style="display: block; margin-bottom: 5px;">DIPA nos últimos 3 meses</strong>
@@ -243,7 +264,7 @@
             <label><strong>Data do último parto</strong><input type="date" name="lastBirthDate" /></label>
             <label><strong>Data do último aborto</strong><input type="date" name="lastAbortionDate" /></label>
             
-            <div class="span-2">
+            <div>
               <strong style="display: block; margin-bottom: 5px;">Infecção pós-parto ou pós-aborto</strong>
               <div class="field-group">
                 <label><input type="radio" name="postInfection" value="Sim" /> Sim</label>
@@ -261,7 +282,7 @@
             </div>
           </div>
           <div class="grid two-cols">
-            <div class="span-2">
+            <div>
               <strong style="display: block; margin-bottom: 5px;">DIU escolhido</strong>
               <div class="field-group">
                 <label><input type="radio" name="chosenIud" value="Tcu" /> TCu</label>
@@ -269,7 +290,7 @@
               </div>
             </div>
             
-            <div class="span-2">
+            <div>
               <strong style="display: block; margin-bottom: 5px;">Informada sobre contraindicações e efeitos do DIU?</strong>
               <div class="field-group">
                 <label><input type="radio" name="informed" value="Sim" /> Sim</label>
@@ -295,7 +316,7 @@
             <label><strong>PA</strong><input type="text" name="bloodPressure" placeholder="___x___ mmHg" /></label>
             <label><strong>IMC</strong><input type="text" name="bmi" /></label>
             
-            <div class="span-2">
+            <div>
               <strong style="display: block; margin-bottom: 5px;">Exame pélvico</strong>
               <div class="field-group">
                 <label><input type="radio" name="pelvicExam" value="Normal" /> Normal</label>
@@ -303,7 +324,7 @@
               </div>
             </div>
             
-            <div class="span-2">
+            <div>
               <strong style="display: block; margin-bottom: 5px;">Cervicite purulenta</strong>
               <div class="field-group">
                 <label><input type="radio" name="purulentCervicitis" value="Sim" /> Sim</label>
