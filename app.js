@@ -234,6 +234,12 @@ function getRecordDisplayName(record) {
 }
 
 function loadCurrentFormState() {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('new')) {
+    clearCurrentForm();
+    return false;
+  }
+
   const editingRecordId = getEditingRecordId();
   if (editingRecordId) {
     const record = loadRecords().find((item) => item.id === editingRecordId);
@@ -241,7 +247,6 @@ function loadCurrentFormState() {
       restoreFormData(record.data);
       return true;
     }
-
     setEditingRecordId(null);
   }
 
@@ -324,13 +329,7 @@ function openRecordForEdit(recordId) {
 }
 
 function handleNewRecordAction() {
-  if (currentView === "records") {
-    clearCurrentForm();
-    openFormView();
-    return;
-  }
-
-  persistRecord({ clearAfterSave: true });
+  clearCurrentForm();
 }
 
 function scheduleAutoSave() {
