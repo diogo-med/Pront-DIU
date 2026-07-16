@@ -251,49 +251,55 @@
         <section class="card">
           <div class="section-head">
             <div>
-              <p class="section-kicker">2, 3 e 4</p>
-              <h2>Diagnóstico, resultados e intervenções</h2>
+              <p class="section-kicker">2</p>
+              <h2>Diagnóstico de enfermagem</h2>
             </div>
           </div>
-
-          <div class="grid two-cols">
-            <div>
-              <h3>Diagnóstico de enfermagem</h3>
-              <div class="check-list">
-                <label><input type="checkbox" name="diagnosis" value="Planejamento familiar ineficaz" /> Planejamento familiar ineficaz</label>
-                <label><input type="checkbox" name="diagnosis" value="Risco de gestação não intencional" /> Risco de gestação não intencional</label>
-                <label><input type="checkbox" name="diagnosis" value="Planejamento familiar prejudicado" /> Planejamento familiar prejudicado</label>
-                <label><input type="checkbox" name="diagnosis" value="Falta de conhecimento sobre contracepção" /> Falta de conhecimento sobre contracepção</label>
-                <label><input type="checkbox" name="diagnosis" value="Adesão ao regime medicamentoso insuficiente" /> Adesão ao regime medicamentoso insuficiente</label>
-                <label><input type="checkbox" name="diagnosis" value="Não adesão ao regime medicamentoso" /> Não adesão ao regime medicamentoso</label>
-                <label><input type="checkbox" name="diagnosis" value="Capacidade para proteção prejudicada" /> Capacidade para proteção prejudicada</label>
-                <label class="inline-field"><span>Outro</span><input type="text" name="diagnosisOther" /></label>
-              </div>
-            </div>
-
-            <div>
-              <h3>Resultados</h3>
-              <div class="check-list">
-                <label><input type="checkbox" name="results" value="Manejo adequado do método contraceptivo escolhido" /> Manejo adequado do método contraceptivo escolhido</label>
-                <label class="inline-field"><span>Outro</span><input type="text" name="resultsOther" /></label>
-              </div>
-
-              <h3 class="spaced-top-sm">Intervenções</h3>
-              <div class="check-list">
-                <label><input type="checkbox" name="interventions" value="Anti-inflamatório não-hormonal" /> Anti-inflamatório não-hormonal</label>
-                <label><input type="checkbox" name="interventions" value="USG (40 dias)" /> USG (40 dias)</label>
-                <label><input type="checkbox" name="interventions" value="Analgésico" /> Analgésico</label>
-                <label><input type="checkbox" name="interventions" value="Calor local" /> Calor local</label>
-                <label><input type="checkbox" name="interventions" value="Orientar sobre os métodos contraceptivos disponíveis e indicados" /> Orientar sobre os métodos contraceptivos disponíveis e indicados</label>
-                <label><input type="checkbox" name="interventions" value="Agendar consulta de acompanhamento" /> Agendar consulta de acompanhamento</label>
-                <label class="inline-field"><span>Data do acompanhamento</span><input type="date" name="followUpDate" /></label>
-                <label><input type="checkbox" name="interventions" value="Apoiar o processo de tomada de decisão quanto ao método escolhido" /> Apoiar o processo de tomada de decisão quanto ao método escolhido</label>
-                <label class="span-2 inline-field"><span>Outras</span><textarea name="interventionsOther" rows="3"></textarea></label>
-              </div>
-            </div>
+          <div class="check-grid">
+            <label><input type="checkbox" name="diagnosis" value="Planejamento familiar ineficaz" /> Planejamento familiar ineficaz</label>
+            <label><input type="checkbox" name="diagnosis" value="Risco de gestação não intencional" /> Risco de gestação não intencional</label>
+            <label><input type="checkbox" name="diagnosis" value="Planejamento familiar prejudicado" /> Planejamento familiar prejudicado</label>
+            <label><input type="checkbox" name="diagnosis" value="Falta de conhecimento sobre contracepção" /> Falta de conhecimento sobre contracepção</label>
+            <label><input type="checkbox" name="diagnosis" value="Adesão ao regime medicamentoso insuficiente" /> Adesão ao regime medicamentoso insuficiente</label>
+            <label><input type="checkbox" name="diagnosis" value="Não adesão ao regime medicamentoso" /> Não adesão ao regime medicamentoso</label>
+            <label class="span-2"><input type="checkbox" name="diagnosis" value="Capacidade para proteção prejudicada" /> Capacidade para proteção prejudicada</label>
+            <label class="span-2 inline-field"><span>Outro</span><input type="text" name="diagnosisOther" /></label>
           </div>
         </section>
 
+        <section class="card">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">3</p>
+              <h2>Resultados</h2>
+            </div>
+          </div>
+          <div class="check-grid">
+            <label class="span-2"><input type="checkbox" name="results" value="Manejo adequado do método contraceptivo escolhido" /> Manejo adequado do método contraceptivo escolhido</label>
+            <label class="span-2 inline-field"><span>Outro</span><input type="text" name="resultsOther" /></label>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">4</p>
+              <h2>Intervenções</h2>
+            </div>
+          </div>
+          <div class="check-grid">
+            <label><input type="checkbox" name="interventions" value="Anti-inflamatório não-hormonal" /> Anti-inflamatório não-hormonal</label>
+            <label><input type="checkbox" name="interventions" value="USG (40 dias)" /> USG (40 dias)</label>
+            <label><input type="checkbox" name="interventions" value="Analgésico" /> Analgésico</label>
+            <label><input type="checkbox" name="interventions" value="Calor local" /> Calor local</label>
+            <label class="span-2"><input type="checkbox" name="interventions" value="Orientar sobre os métodos contraceptivos disponíveis e indicados" /> Orientar sobre os métodos contraceptivos disponíveis e indicados</label>
+            <label><input type="checkbox" name="interventions" value="Agendar consulta de acompanhamento" /> Agendar consulta de acompanhamento</label>
+            <label class="inline-field"><span>Data do acompanhamento</span><input type="date" name="followUpDate" /></label>
+            <label class="span-2"><input type="checkbox" name="interventions" value="Apoiar o processo de tomada de decisão quanto ao método escolhido" /> Apoiar o processo de tomada de decisão quanto ao método escolhido</label>
+            <label class="span-2 inline-field"><span>Outras</span><textarea name="interventionsOther" rows="3"></textarea></label>
+          </div>
+        </section>
+        
         <section class="card">
           <div class="grid two-cols">
             <label>Local<input type="text" name="location" /></label>
