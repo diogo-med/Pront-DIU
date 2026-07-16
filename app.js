@@ -1,15 +1,32 @@
-const STORAGE_KEY = "prontdiu.form.v1";
-const LAST_SAVED_KEY = "prontdiu.savedAt.v1";
+const FORM_DRAFT_KEY = "prontdiu.form.v1";
+const RECORDS_KEY = "prontdiu.records.v1";
+const EDITING_RECORD_KEY = "prontdiu.editingRecordId.v1";
 
 const form = document.getElementById("diuForm");
-const saveBtn = document.getElementById("saveBtn");
 const clearBtn = document.getElementById("clearBtn");
 const newRecordBtn = document.getElementById("newRecordBtn");
 const printBtn = document.getElementById("printBtn");
+const formView = document.getElementById("formView");
 const toastTemplate = document.getElementById("toastTemplate");
 
 let saveTimer = null;
 let toastTimer = null;
+let currentView = "form";
+
+window.prontDiuApp = {
+  clearForm: (event) => {
+    event?.preventDefault?.();
+    clearCurrentForm();
+  },
+  saveRecord: (event) => {
+    event?.preventDefault?.();
+    persistRecord({ redirectToRecords: true });
+  },
+  printForm: (event) => {
+    event?.preventDefault?.();
+    handlePrintAction();
+  },
+};
 
 function getFieldValue(field) {
   if (field.type === "checkbox") {
@@ -133,41 +150,194 @@ function showToast(message) {
   }, 2200);
 }
 
-function saveDraft() {
-  const payload = {
-    savedAt: new Date().toISOString(),
-    data: collectFormData(),
-  };
-
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload.data));
-  localStorage.setItem(LAST_SAVED_KEY, payload.savedAt);
-  showToast("Rascunho salvo localmente");
-}
-
-function loadDraft() {
-  const rawData = localStorage.getItem(STORAGE_KEY);
-  if (!rawData) return false;
+function readJSON(key, fallback) {
+  const raw = localStorage.getItem(key);
+  if (!raw) return fallback;
 
   try {
-    const data = JSON.parse(rawData);
-    restoreFormData(data);
-    return true;
+    return JSON.parse(raw);
   } catch (error) {
-    console.error("Falha ao carregar rascunho", error);
-    return false;
+    console.error(`Falha ao ler ${key}`, error);
+    return fallback;
   }
 }
 
+function writeJSON(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function loadDraft() {
+  const draft = readJSON(FORM_DRAFT_KEY, null);
+  if (!draft || typeof draft !== "object") return false;
+  restoreFormData(draft);
+  return true;
+}
+
+function saveDraft(data = collectFormData()) {
+  writeJSON(FORM_DRAFT_KEY, data);
+}
+
 function clearDraft() {
+  localStorage.removeItem(FORM_DRAFT_KEY);
+}
+
+function loadRecords() {
+  const records = readJSON(RECORDS_KEY, []);
+  return Array.isArray(records) ? records : [];
+}
+
+function saveRecords(records) {
+  writeJSON(RECORDS_KEY, records);
+}
+
+function getEditingRecordId() {
+  return sessionStorage.getItem(EDITING_RECORD_KEY);
+}
+
+function setEditingRecordId(recordId) {
+  if (!recordId) {
+    sessionStorage.removeItem(EDITING_RECORD_KEY);
+    return;
+  }
+
+  sessionStorage.setItem(EDITING_RECORD_KEY, recordId);
+}
+
+function generateRecordId() {
+  if (window.crypto && typeof window.crypto.randomUUID === "function") {
+    return window.crypto.randomUUID();
+  }
+
+  return `record-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function formatDateTime(isoString) {
+  if (!isoString) return "Sem data";
+
+  return new Intl.DateTimeFormat("pt-BR", {
+    dateStyle: "short",
+    timeStyle: "short",
+  }).format(new Date(isoString));
+}
+
+function formatDateOnly(isoString) {
+  if (!isoString) return "Sem data";
+
+  return new Intl.DateTimeFormat("pt-BR", {
+    dateStyle: "medium",
+  }).format(new Date(isoString));
+}
+
+function getRecordDisplayName(record) {
+  const rawName = record?.data?.patientName?.trim();
+  return rawName || "Nome não informado";
+}
+
+function loadCurrentFormState() {
+  const editingRecordId = getEditingRecordId();
+  if (editingRecordId) {
+    const record = loadRecords().find((item) => item.id === editingRecordId);
+    if (record) {
+      restoreFormData(record.data);
+      return true;
+    }
+
+    setEditingRecordId(null);
+  }
+
+  return loadDraft();
+}
+
+function persistRecord({ clearAfterSave = false, redirectToRecords = false } = {}) {
+  const formData = collectFormData();
+  const now = new Date().toISOString();
+  const editingRecordId = getEditingRecordId();
+  const records = loadRecords();
+  const existingIndex = editingRecordId ? records.findIndex((record) => record.id === editingRecordId) : -1;
+  let savedRecordId = editingRecordId;
+
+  if (existingIndex >= 0) {
+    const existingRecord = records[existingIndex];
+    savedRecordId = existingRecord.id;
+    records[existingIndex] = {
+      ...existingRecord,
+      updatedAt: now,
+      data: formData,
+    };
+  } else {
+    const newRecord = {
+      id: generateRecordId(),
+      createdAt: now,
+      updatedAt: now,
+      data: formData,
+    };
+    records.push(newRecord);
+    savedRecordId = newRecord.id;
+  }
+
+  saveRecords(records);
+  saveDraft(formData);
+  if (!clearAfterSave) {
+    setEditingRecordId(savedRecordId);
+  }
+  showToast(existingIndex >= 0 ? "Prontuário atualizado" : "Prontuário salvo");
+
+
+  if (clearAfterSave) {
+    clearCurrentForm();
+  }
+
+  if (redirectToRecords) {
+    // redireciona para a página dedicada de lista de prontuários
+    location.href = "records.html";
+  }
+}
+
+function clearCurrentForm() {
+  if (saveTimer) {
+    window.clearTimeout(saveTimer);
+    saveTimer = null;
+  }
+
   form.reset();
-  localStorage.removeItem(STORAGE_KEY);
-  localStorage.removeItem(LAST_SAVED_KEY);
+  setEditingRecordId(null);
+  clearDraft();
+  const url = new URL(window.location.href);
+  url.search = "";
+  window.history.replaceState({}, "", url.toString());
   showToast("Formulário limpo");
+}
+
+function openRecordForEdit(recordId) {
+  const record = loadRecords().find((item) => item.id === recordId);
+  if (!record) {
+    showToast("Prontuário não encontrado");
+    return;
+  }
+
+  setEditingRecordId(recordId);
+  restoreFormData(record.data);
+  saveDraft(record.data);
+  openFormView();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  showToast(`Prontuário de ${getRecordDisplayName(record)} aberto para edição`);
+}
+
+function handleNewRecordAction() {
+  if (currentView === "records") {
+    clearCurrentForm();
+    openFormView();
+    return;
+  }
+
+  persistRecord({ clearAfterSave: true });
 }
 
 function scheduleAutoSave() {
   window.clearTimeout(saveTimer);
-  saveTimer = window.setTimeout(saveDraft, 700);
+  saveTimer = window.setTimeout(() => {
+    saveDraft();
+  }, 700);
 }
 
 function registerServiceWorker() {
@@ -180,26 +350,52 @@ function registerServiceWorker() {
 
 form.addEventListener("input", scheduleAutoSave);
 form.addEventListener("change", scheduleAutoSave);
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
-  saveDraft();
-  showToast("Prontuário salvo no dispositivo");
-});
+if (form) {
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    // sempre redireciona para a lista após salvar para visual feedback
+    persistRecord({ redirectToRecords: true });
+  });
+}
 
-saveBtn.addEventListener("click", saveDraft);
-clearBtn.addEventListener("click", () => {
-  const confirmed = window.confirm("Deseja limpar o formulário e apagar o rascunho salvo?");
-  if (confirmed) {
-    clearDraft();
+if (clearBtn) {
+  clearBtn.addEventListener("click", () => {
+    const confirmed = window.confirm("Deseja limpar o formulário e apagar o rascunho salvo?");
+    if (confirmed) {
+      clearCurrentForm();
+    }
+  });
+}
+
+if (newRecordBtn) {
+  newRecordBtn.addEventListener("click", handleNewRecordAction);
+}
+
+function buildPrintableHtml(dataHtml) {
+  return `<!doctype html><html><head><meta charset=\"utf-8\"><title>Imprimir prontuário</title>
+    <link rel=\"stylesheet\" href=\"styles.css\"> <style>body{padding:20px;font-family:Inter,system-ui,sans-serif} .card{box-shadow:none;border:0}</style>
+    </head><body>${dataHtml}</body></html>`;
+}
+
+function handlePrintAction() {
+  try {
+    // Esconde os botões da seção de ações do formulário
+    const formActions = document.querySelector('.form-actions');
+    const wasHidden = formActions?.style.display;
+    if (formActions) formActions.style.display = 'none';
+
+    // Dispara o print do navegador
+    window.print();
+
+    // Restaura os botões após um pequeno atraso
+    setTimeout(() => {
+      if (formActions) formActions.style.display = wasHidden || '';
+    }, 100);
+  } catch (err) {
+    console.error(err);
+    showToast("Erro ao preparar impressão");
   }
-});
-newRecordBtn.addEventListener("click", () => {
-  const confirmed = window.confirm("Criar um novo prontuário? O rascunho atual será apagado.");
-  if (confirmed) {
-    clearDraft();
-  }
-});
-printBtn.addEventListener("click", () => window.print());
+}
 
 window.addEventListener("beforeunload", () => {
   if (saveTimer) {
@@ -208,5 +404,5 @@ window.addEventListener("beforeunload", () => {
   }
 });
 
-loadDraft();
+loadCurrentFormState();
 registerServiceWorker();

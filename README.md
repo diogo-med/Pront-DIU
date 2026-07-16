@@ -6,6 +6,8 @@ Base de PWA para preenchimento da ficha clínica de consulta de enfermagem para 
 
 - Formulário com as principais seções do prontuário.
 - Auto-salvamento local no navegador.
+- Lista de prontuários salvos, ordenada por data de criação, com abertura para edição.
+	- Página dedicada `records.html` com listagem e exclusão de prontuários.
 - Exportação em JSON.
 - Instalação como PWA e suporte offline.
 - Layout responsivo para uso em desktop e celular.
@@ -17,10 +19,3 @@ Sirva os arquivos por um servidor local, por exemplo com o Live Server do VS Cod
 ## Observação
 
 As informações ficam salvas apenas no dispositivo do navegador, até o exportador JSON ser usado ou os dados serem apagados.
-
-
-
-
-
-
-quero que tenha uma página secundária que vai listar os prontuários que foram salvos nessa página os prontuários estarão listados sendo identificados pelo nome e ordenados pela data de criação para acessar essa página clica num botão "prontuários", caso a pessoa estivesse editando um prontuário as informações são salvas e redireciona para a página da lista.quero fazer uma alteração no bloco superior(que possui os botões "novo formulário" e imprimir pdf) e no bloco inferior(limpar prontuario, salvar rascunho e salvar prontuário) o bloco superior deixa de existir e o botão novo prontuário(salva as informações preenchidas e limpa o prontuário) fica no canto superior direito da página sem um bloco englobando o botão, enquanto o bloco inferior fica apenas com os botões salvar(deixar as informações salvas para uma possível edição futura), limpar formulário e imprimir(imprimir pdf)

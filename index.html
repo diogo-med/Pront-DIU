@@ -19,21 +19,20 @@
         <h1>Ficha clínica de consulta de enfermagem para inserção do DIU</h1>
         <p class="lead">Base de PWA para registrar a investigação, o procedimento, o diagnóstico e as intervenções com salvamento local no navegador.</p>
       </div>
-      <div class="hero-card">
-        <div class="hero-actions">
-          <button type="button" class="secondary" id="newRecordBtn">Novo prontuário</button>
-          <button type="button" class="primary" id="printBtn">Imprimir (PDF)</button>
-        </div>
+      <div class="hero-actions utility-actions">
+        <a href="records.html" class="secondary" id="recordsBtn">Prontuários</a>
+        <button type="button" class="primary" id="newRecordBtn">Novo prontuário</button>
       </div>
     </header>
 
     <main class="content">
-      <section class="notice">
-        <strong>Auto-salvamento local ativado.</strong>
-        <span>Os dados ficam no dispositivo até que sejam exportados, impressos ou limpos manualmente.</span>
-      </section>
+      <section id="formView" class="view">
+        <section class="notice">
+          <strong>Auto-salvamento local ativado.</strong>
+          <span>Os dados ficam no dispositivo até que sejam salvos, impressos ou limpos manualmente.</span>
+        </section>
 
-      <form id="diuForm" class="record-form" autocomplete="off">
+        <form id="diuForm" class="record-form" autocomplete="off">
         <section class="card">
           <div class="section-head">
             <div>
@@ -303,11 +302,15 @@
         </section>
 
         <section class="form-actions card">
-          <button type="button" class="secondary" id="clearBtn">Limpar formulário</button>
-          <button type="button" class="secondary" id="saveBtn">Salvar rascunho</button>
-          <button type="submit" class="primary">Salvar prontuário</button>
+          <button type="button" class="secondary" id="clearBtn" onclick="window.prontDiuApp.clearForm(event)">Limpar formulário</button>
+          <button type="button" class="primary" id="saveBtn" onclick="window.prontDiuApp.saveRecord(event)">Salvar</button>
+          <button type="button" class="secondary" id="printBtn" onclick="window.prontDiuApp.printForm(event)">Imprimir (PDF)</button>
         </section>
-      </form>
+
+        </form>
+      </section>
+
+      <!-- Lista de prontuários em página separada: records.html -->
     </main>
   </div>
 

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Prontuários — ProntuarioDIU</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">ProntuarioDIU</p>
+        <h1>Prontuários salvos</h1>
+        <p class="lead">Lista de prontuários salvos no dispositivo. Abra para editar ou exclua registros.</p>
+      </div>
+      <div class="hero-actions utility-actions">
+        <a href="index.html" class="secondary">Voltar</a>
+        <a href="index.html" class="primary">Novo prontuário</a>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="records-header card">
+        <div>
+          <p class="section-kicker">Prontuários</p>
+          <h2>Lista de prontuários</h2>
+          <p class="lead records-lead">Os prontuários aparecem em ordem de criação e podem ser reabertos para edição.</p>
+        </div>
+        <div class="records-summary">
+          <strong id="recordsCount">0</strong>
+          <span>itens salvos</span>
+        </div>
+      </section>
+
+      <div id="recordsEmpty" class="notice records-empty" hidden>
+        <strong>Nenhum prontuário salvo ainda.</strong>
+        <span>Clique em “Novo prontuário” para salvar o primeiro registro.</span>
+      </div>
+
+      <div id="recordsList" class="records-list"></div>
+    </main>
+  </div>
+
+  <template id="toastTemplate">
+    <div class="toast"></div>
+  </template>
+
+  <script src="records.js" type="module"></script>
+</body>
+</html>
