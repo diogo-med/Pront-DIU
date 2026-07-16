@@ -1,18 +1,18 @@
 :root {
   color-scheme: light;
-  --bg: #f3f7f6;
+  --bg: #f5f3ff; /* Lilás bem clarinho para o fundo geral */
   --surface: rgba(255, 255, 255, 0.88);
   --surface-strong: #ffffff;
-  --text: #10211f;
-  --muted: #5f6f6b;
-  --border: rgba(16, 33, 31, 0.12);
-  --primary: #0f766e;
-  --primary-strong: #115e59;
+  --text: #1a102f; /* Roxo escuro quase preto */
+  --muted: #6c5f78; /* Cinza arroxeado */
+  --border: rgba(26, 16, 47, 0.12); /* Bordas com tom roxo sutil */
+  --primary: #7c3aed; /* Roxo vibrante (antigo verde primary) */
+  --primary-strong: #5b21b6; /* Roxo escuro (antigo verde primary-strong) */
   --accent: #f97316;
-  --shadow: 0 18px 50px rgba(8, 23, 20, 0.12);
+  --shadow: 0 18px 50px rgba(26, 16, 47, 0.12);
   --radius: 24px;
   --radius-sm: 16px;
-  --focus: 0 0 0 4px rgba(15, 118, 110, 0.16);
+  --focus: 0 0 0 4px rgba(124, 58, 237, 0.16); /* Foco roxo translúcido */
 }
 
 * {
@@ -28,9 +28,9 @@ body {
   font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
   color: var(--text);
   background:
-    radial-gradient(circle at top left, rgba(15, 118, 110, 0.16), transparent 28%),
+    radial-gradient(circle at top left, rgba(124, 58, 237, 0.16), transparent 28%), /* Gradiente em roxo */
     radial-gradient(circle at top right, rgba(249, 115, 22, 0.14), transparent 24%),
-    linear-gradient(180deg, #f7fbfa 0%, #eef5f3 100%);
+    linear-gradient(180deg, #faf5ff 0%, #f3e8ff 100%); /* Tons lilás e violeta claro no fundo */
   min-height: 100vh;
 }
 
@@ -79,7 +79,7 @@ input[type="radio"] {
   height: 1rem;
   padding: 0;
   border-radius: 4px;
-  accent-color: var(--primary);
+  accent-color: var(--primary); /* Checkboxes e Radios ficam roxos automaticamente */
 }
 
 textarea {
@@ -173,13 +173,13 @@ h1 {
 .primary {
   background: linear-gradient(135deg, var(--primary), var(--primary-strong));
   color: white;
-  box-shadow: 0 10px 28px rgba(15, 118, 110, 0.24);
+  box-shadow: 0 10px 28px rgba(124, 58, 237, 0.24); /* Sombra roxa sutil */
 }
 
 .secondary {
   background: rgba(255, 255, 255, 0.84);
   color: var(--text);
-  border: 1px solid rgba(16, 33, 31, 0.12);
+  border: 1px solid rgba(26, 16, 47, 0.12);
 }
 
 /* Apply hover transform to anchor-styled buttons too */
@@ -270,7 +270,7 @@ label > span,
 .check-grid,
 .check-list {
   padding: 0.95rem;
-  border: 1px solid rgba(16, 33, 31, 0.08);
+  border: 1px solid rgba(26, 16, 47, 0.08);
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.7);
 }
@@ -327,7 +327,7 @@ label > span,
   display: flex;
   gap: 0.8rem;
   flex-wrap: wrap;
-  justify-content: flex-end; /* Mantém eles na direita em telas grandes. Mude para 'center' se preferir no meio */
+  justify-content: flex-end;
 }
 
 .records-view {
@@ -375,9 +375,9 @@ label > span,
   gap: 1rem;
   padding: 1.1rem 1.15rem;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(16, 33, 31, 0.09);
+  border: 1px solid rgba(26, 16, 47, 0.09);
   background: rgba(255, 255, 255, 0.86);
-  box-shadow: 0 10px 30px rgba(8, 23, 20, 0.08);
+  box-shadow: 0 10px 30px rgba(26, 16, 47, 0.08);
 }
 
 .record-card-content {
@@ -412,11 +412,11 @@ label > span,
   position: fixed;
   bottom: 1rem;
   right: 1rem;
-  background: rgba(16, 33, 31, 0.96);
+  background: rgba(26, 16, 47, 0.96); /* Toast com base roxa bem escura */
   color: white;
   padding: 0.95rem 1.1rem;
   border-radius: 16px;
-  box-shadow: 0 16px 42px rgba(8, 23, 20, 0.24);
+  box-shadow: 0 16px 42px rgba(26, 16, 47, 0.24);
   opacity: 0;
   transform: translateY(10px);
   pointer-events: none;
@@ -511,7 +511,7 @@ label > span,
 
   .card {
     box-shadow: none;
-    border: 1px solid #cbd5d1;
+    border: 1px solid #d8b4fe; /* Borda lilás sutil no papel de impressão */
     page-break-inside: auto;
     break-inside: auto;
   }
@@ -519,11 +519,10 @@ label > span,
   input,
   textarea,
   select {
-    border-color: #94a3a8;
+    border-color: #a78bfa; /* Tom roxo/lilás para os inputs na impressão */
     background: white;
   }
 
-  /* Garante página única longa, sem quebras forçadas */
   * {
     page-break-inside: auto !important;
     break-inside: auto !important;
