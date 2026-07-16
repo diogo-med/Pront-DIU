@@ -341,8 +341,33 @@ function scheduleAutoSave() {
 
 function registerServiceWorker() {
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js").catch((error) => {
-      console.warn("Service worker não registrado", error);
+    navigator.serviceWorker.register("sw.js")
+      .then((registration) => {
+        // Se houver uma atualização pendente e o navegador achar um sw novo
+        registration.addEventListener("updatefound", () => {
+          const newWorker = registration.installing;
+          if (newWorker) {
+            newWorker.addEventListener("statechange", () => {
+              // Quando o novo SW terminar de instalar e for ativado
+              if (newWorker.state === "activated") {
+                console.log("Nova versão detectada! Recarregando...");
+                window.location.reload(); // Recarrega para aplicar a atualização
+              }
+            });
+          }
+        });
+      })
+      .catch((error) => {
+        console.warn("Service worker não registrado", error);
+      });
+
+    // Garante o recarregamento caso o SW mude em outra aba ativa
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (!refreshing) {
+        refreshing = true;
+        window.location.reload();
+      }
     });
   }
 }

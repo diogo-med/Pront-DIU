@@ -1,4 +1,4 @@
-const CACHE_NAME = "prontdiu-cache-v1";
+const CACHE_NAME = "prontdiu-cache-v1.1";
 const ASSETS = [
   "./",
   "./index.html",
@@ -43,3 +43,4 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
