@@ -1,4 +1,4 @@
-const CACHE_NAME = "prontdiu-cache-v1.1";
+const CACHE_NAME = "prontdiu-cache-v1.11";
 const ASSETS = [
   "./",
   "./index.html",

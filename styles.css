@@ -107,9 +107,9 @@ select {
 
 .eyebrow,
 .section-kicker {
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   letter-spacing: 0.14em;
-  font-size: 0.74rem;
+  font-size: 1.15rem;
   color: var(--primary-strong);
   font-weight: 700;
   margin: 0 0 0.4rem;

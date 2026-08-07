@@ -30,14 +30,15 @@
       <section id="formView" class="view">
         <section class="notice">
           <p class="section-kicker">1. Investigação</p>
+          <label><strong>Data do atendimento</strong><input type="date" name="attendanceDate" /></label>
         </section>
 
         <form id="diuForm" class="record-form" autocomplete="off">
         <section class="card">
           <div class="section-head">
             <div>
-              <p class="section-kicker">1.1</p>
-              <h2>Dados gerais e anamnese</h2>
+              <p class="section-kicker">1.1 Dados gerais e anamnese</p>
+              <h2></h2>
             </div>
             <div class="inline-field compact">
               <label for="teletriageDate"><strong>Data da teletriagem</strong></label>
@@ -47,17 +48,28 @@
 
           <div class="grid two-cols">
             <label><strong>Data do atendimento</strong><input type="date" name="attendanceDate" /></label>
-            <label><strong>N° do prontuário</strong><input type="text" name="recordNumber" placeholder="Digite o número" /></label>
+            <label><strong>N° do prontuário</strong><input type="text" name="recordNumber" inputmode="numeric" pattern="[0-9]*" placeholder="Digite o número" /></label>
             <label class="span-2"><strong>Nome</strong><input type="text" name="patientName" /></label>
             <label><strong>Data de nascimento</strong><input type="date" name="birthDate" /></label>
             <label><strong>Idade</strong><input type="number" name="age" min="0" /></label>
-            <label><strong>RG</strong><input type="text" name="rg" /></label>
-            <label><strong>CPF</strong><input type="text" name="cpf" /></label>
-            <label><strong>CNS</strong><input type="text" name="cns" /></label>
+            <label><strong>RG</strong><input type="text" name="rg" inputmode="numeric" pattern="[0-9]*" /></label>
+            <label><strong>CPF</strong><input type="text" name="cpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" /></label>
+            <label><strong>CNS</strong><input type="text" name="cns" inputmode="numeric" pattern="[0-9]*" /></label>
             <label><strong>Religião</strong><input type="text" name="religion" /></label>
-            <label><strong>Telefone</strong><input type="tel" name="phone" /></label>
+            <label><strong>Telefone</strong><input type="text" name="phone" inputmode="numeric" autocomplete="off" placeholder="(00) 00000-0000" /></label>
             <label><strong>Profissão/Ocupação</strong><input type="text" name="occupation" /></label>
-            <label><strong>Cor/raça</strong><input type="text" name="race" placeholder="P, P, Q, B, A, I" /></label>
+            <label>
+              <strong>Cor/raça</strong>
+              <select name="race">
+                <option value="">Selecione</option>
+                <option value="Preta">Preta</option>
+                <option value="Parda">Parda</option>
+                <option value="Quilombola">Quilombola</option>
+                <option value="Branca">Branca</option>
+                <option value="Amarela">Amarela</option>
+                <option value="Indígena">Indígena</option>
+              </select>
+            </label>
             <label><strong>Escolaridade</strong><input type="text" name="education" /></label>
             <label><strong>PcD</strong><input type="text" name="disability" /></label>
             <label class="span-2"><strong>Endereço</strong><textarea name="address" rows="2"></textarea></label>
@@ -67,8 +79,8 @@
         <section class="card">
           <div class="section-head">
             <div>
-              <p class="section-kicker">1.2</p>
-              <h2>Motivação para inserção do DIU</h2>
+              <p class="section-kicker">1.2 Motivação para inserção do DIU</p>
+              <h2></h2>
             </div>
           </div>
           <div class="check-grid">
@@ -87,8 +99,8 @@
         <section class="card">
           <div class="section-head">
             <div>
-              <p class="section-kicker">1.3</p>
-              <h2>Antecedentes pessoais e ginecológicos</h2>
+              <p class="section-kicker">1.3 Antecedentes pessoais e ginecológicos</p>
+              <h2></h2>
             </div>
           </div>
 
@@ -252,8 +264,8 @@
         <section class="card">
           <div class="section-head">
             <div>
-              <p class="section-kicker">1.4</p>
-              <h2>Antecedentes obstétricos</h2>
+              <p class="section-kicker">1.4 Antecedentes obstétricos</p>
+              <h2></h2>
             </div>
           </div>
           <div class="grid two-cols">
@@ -277,8 +289,8 @@
         <section class="card">
           <div class="section-head">
             <div>
-              <p class="section-kicker">1.5</p>
-              <h2>Escolha contraceptiva</h2>
+              <p class="section-kicker">1.5 Escolha contraceptiva</p>
+              <h2></h2>
             </div>
           </div>
           <div class="grid two-cols">
@@ -298,7 +310,16 @@
               </div>
             </div>
             
-            <label><strong>Elegibilidade para o DIU</strong><input type="text" name="eligibility" placeholder="1/2 ou 3/4" /></label>
+            <label>
+              <strong>Elegibilidade para o DIU</strong>
+              <select name="eligibility">
+                <option value="">Selecione</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </label>
             <label><strong>Data da inserção</strong><input type="date" name="insertionDate" /></label>
           </div>
         </section>
@@ -306,8 +327,8 @@
         <section class="card">
           <div class="section-head">
             <div>
-              <p class="section-kicker">1.6</p>
-              <h2>Exame físico</h2>
+              <p class="section-kicker">1.6 Exame físico</p>
+              <h2></h2>
             </div>
           </div>
           <div class="grid two-cols">
@@ -337,8 +358,8 @@
         <section class="card">
           <div class="section-head">
             <div>
-              <p class="section-kicker">1.7</p>
-              <h2>Inserção do DIU</h2>
+              <p class="section-kicker">1.7 Inserção do DIU</p>
+              <h2></h2>
             </div>
           </div>
           <div class="grid two-cols">
@@ -421,8 +442,8 @@
         <section class="card">
           <div class="section-head">
             <div>
-              <p class="section-kicker">1.8</p>
-              <h2>Intercorrências</h2>
+              <p class="section-kicker">1.8 Intercorrências</p>
+              <h2></h2>
             </div>
           </div>
           <div class="check-grid">
@@ -440,8 +461,8 @@
         <section class="card">
           <div class="section-head">
             <div>
-              <p class="section-kicker">2</p>
-              <h2>Diagnóstico de enfermagem</h2>
+              <p class="section-kicker">2. Diagnóstico de enfermagem</p>
+              <h2></h2>
             </div>
           </div>
           <div class="check-grid">
@@ -459,8 +480,8 @@
         <section class="card">
           <div class="section-head">
             <div>
-              <p class="section-kicker">3</p>
-              <h2>Resultados</h2>
+              <p class="section-kicker">3. Resultados</p>
+              <h2></h2>
             </div>
           </div>
           <div class="check-grid">
@@ -472,8 +493,8 @@
         <section class="card">
           <div class="section-head">
             <div>
-              <p class="section-kicker">4</p>
-              <h2>Intervenções</h2>
+              <p class="section-kicker">4. Intervenções</p>
+              <h2></h2>
             </div>
           </div>
           <div class="check-grid">
