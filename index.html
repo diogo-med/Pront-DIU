@@ -16,7 +16,10 @@
     
     <header class="hero" style="display: block; width: 100%; padding: 2rem 1rem;">
       <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 2.5rem;">
-        <p class="eyebrow" style="margin: 0;">Prontuario-DIU</p>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <img src="icons/LOGO.png" alt="Logo Prontuario-DIU" style="width: 52px; height: 52px; object-fit: contain;" />
+          <p class="eyebrow" style="margin: 0;">Prontuario-DIU</p>
+        </div>
         <div class="hero-actions utility-actions" style="margin: 0; display: flex; gap: 10px;">
           <a href="records.html" class="secondary" id="recordsBtn">Prontuários</a>
           <button type="button" class="primary" id="newRecordBtn">Novo prontuário</button>
@@ -519,7 +522,7 @@
 
         <section class="form-actions card">
           <button type="button" class="secondary" id="clearBtn" onclick="window.prontDiuApp.clearForm(event)">Limpar formulário</button>
-          <button type="button" class="primary" id="saveBtn" onclick="window.prontDiuApp.saveRecord(event)">Salvar</button>
+          <button type="submit" class="primary" id="saveBtn">Salvar</button>
           <button type="button" class="secondary" id="printBtn" onclick="window.prontDiuApp.printForm(event)">Imprimir (PDF)</button>
         </section>
 

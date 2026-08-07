@@ -47,7 +47,7 @@ function formatDateOnly(isoString) {
 }
 
 function getRecordDisplayName(record) {
-  const rawName = record?.data?.patientName?.trim();
+  const rawName = String(record?.data?.patientName ?? "").trim();
   return rawName || "Nome não informado";
 }
 
@@ -88,7 +88,7 @@ function renderRecords() {
 
     const secondary = document.createElement("p");
     secondary.className = "record-card-secondary";
-    const recordNumber = record?.data?.recordNumber?.trim();
+    const recordNumber = String(record?.data?.recordNumber ?? "").trim();
     secondary.textContent = recordNumber ? `Prontuário ${recordNumber}` : "Sem número de prontuário informado";
 
     content.append(title, secondary, meta);
