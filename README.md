@@ -25,10 +25,6 @@ Base de PWA para preenchimento da ficha clínica de consulta de enfermagem para 
 - `icons/icon.png`: ícone do aplicativo usado pela PWA e atalhos instalados.
 - `README.md`: documentação do projeto, uso e visão geral da estrutura.
 
-## Como rodar
-
-Sirva os arquivos por um servidor local, por exemplo com o Live Server do VS Code ou qualquer servidor estático.
-
 ## Observação
 
 As informações ficam salvas apenas no dispositivo do navegador, até o exportador JSON ser usado ou os dados serem apagados.
