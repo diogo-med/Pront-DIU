@@ -158,6 +158,42 @@ h1 {
   padding-top: 0.2rem;
 }
 
+.page-header {
+  padding: 1.5rem 0 1.2rem;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.page-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.page-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.page-header-brand img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.page-header-brand .eyebrow {
+  margin: 0;
+}
+
+.page-header-title {
+  text-align: center;
+  max-width: none;
+}
+
 .primary,
 .secondary {
   display: inline-flex;
@@ -398,6 +434,8 @@ label > span,
 .record-card-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .record-card-actions .secondary {

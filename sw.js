@@ -1,11 +1,18 @@
-const CACHE_NAME = "prontdiu-cache-v1.11";
+const CACHE_NAME = "prontdiu-cache-v2.1";
 const ASSETS = [
   "./",
   "./index.html",
+  "./insercao.html",
   "./styles.css",
   "./app.js",
+  "./insercao.js",
+  "./db.js",
+  "./ui.js",
+  "./form-utils.js",
+  "./print.js",
   "./manifest.webmanifest",
   "./icons/icon.png",
+  "./icons/LOGO.png",
   "./records.html",
   "./records.js"
 ];

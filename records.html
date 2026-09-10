@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="theme-color" content="#7c3aed" />
   <meta name="description" content="PWA para preenchimento da ficha clínica de consulta de enfermagem para inserção do DIU." />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icons/icon.png" type="image/png" />
   <link rel="apple-touch-icon" href="icons/icon.png" />
@@ -15,14 +16,14 @@
   <div class="app-shell">
     <header class="hero">
       <div>
-        <img src="icons/LOGO.png" alt="Logo Prontuario-DIU" style="width: 52px; height: 52px; object-fit: contain; margin-bottom: 8px;" />
+        <img src="icons/LOGO.png" alt="Logo Prontuario-DIU" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 8px;" />
         <p class="eyebrow">ProntuarioDIU</p>
         <h1>Prontuários salvos</h1>
         <p class="lead">Lista de prontuários salvos no dispositivo. Abra para editar ou exclua registros.</p>
       </div>
       <div class="hero-actions utility-actions">
-        <a href="index.html" class="secondary">Voltar</a>
-        <a href="index.html?new=true" class="primary">Novo prontuário</a>
+        <a href="index.html?new=true" class="primary">Nova Triagem</a>
+        <a href="insercao.html?new=true" class="secondary">Nova Inserção</a>
       </div>
     </header>
 
