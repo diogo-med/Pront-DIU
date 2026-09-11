@@ -41,8 +41,8 @@
               <h2></h2>
             </div>
             <div class="inline-field compact">
-              <label for="teletriageDate"><strong>Data da teletriagem</strong></label>
-              <input type="date" id="teletriageDate" name="teletriageDate" />
+              <label for="triageDate"><strong>Data da triagem</strong></label>
+              <input type="date" id="triageDate" name="triageDate" />
             </div>
           </div>
 
@@ -70,7 +70,20 @@
                 <option value="Indígena">Indígena</option>
               </select>
             </label>
-            <label><strong>Escolaridade</strong><input type="text" name="education" /></label>
+            <label>
+              <strong>Escolaridade</strong>
+              <select name="education">
+                <option value="">Selecione</option>
+                <option>Analfabeto</option>
+                <option>Fundamental incompleto</option>
+                <option>Fundamental completo</option>
+                <option>Médio incompleto</option>
+                <option>Médio completo</option>
+                <option>Superior incompleto</option>
+                <option>Superior completo</option>
+                <option>Pós-graduação</option>
+              </select>
+            </label>
             <label><strong>PcD</strong><input type="text" name="disability" /></label>
             <label class="span-2"><strong>Endereço</strong><textarea name="address" rows="2"></textarea></label>
           </div>

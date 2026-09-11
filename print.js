@@ -129,9 +129,10 @@ export function buildObjetivoHtml(data) {
       <div class="item"><strong>Histerometria:</strong> ${formatValue(data.hysterometry)} cm</div>
       <div class="item"><strong>Posição do Útero:</strong> ${formatValue(data.uterusPosition)} ${data.uterusPositionOther ? "- " + formatExtra(data.uterusPositionOther) : ""}</div>
 
-      <div class="item"><strong>Analgesia Usada:</strong> Gel (${formatValue(data.gelUsed)}), Spray (${formatValue(data.sprayUsed)}), Injetável (${formatValue(data.injectableUsed)})</div>
+      <div class="item"><strong>Analgesia Usada:</strong> Gel (${formatValue(data.analgesiaGel)}), Spray (${formatValue(data.analgesiaSpray)}), Injetável (${formatValue(data.analgesiaInjectable)}), Não foi utilizado (${formatValue(data.analgesiaNotUsed)})</div>
+      <div class="item-full"><strong>Detalhes do Analgésico:</strong> ${formatValue(data.analgesiaDetails)}</div>
 
-      <div class="item-full"><strong>Intercorrências:</strong> ${formatValue(data.intercurrences)} ${data.notInsertedReason ? "(Motivo não inserido: " + formatExtra(data.notInsertedReason) + ")" : ""} ${data.otherIntercurrences ? "- " + formatExtra(data.otherIntercurrences) : ""}</div>
+      <div class="item-full"><strong>Intercorrências:</strong> ${formatValue(data.intercurrences)} ${data.notInsertedReason ? "(Motivo da não inserção: " + formatExtra(data.notInsertedReason) + ")" : ""} ${data.otherIntercurrences ? "- " + formatExtra(data.otherIntercurrences) : ""}</div>
     </div>
   `;
 }

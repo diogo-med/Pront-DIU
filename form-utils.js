@@ -42,6 +42,20 @@ export function formatCpf(value) {
   return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
 }
 
+export function formatFlowCycle(value) {
+  const digits = sanitizeInteger(value).slice(0, 4);
+  if (!digits) return "";
+
+  if (digits.length <= 2) return digits;
+  return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+}
+
+export function formatCoitarca(value) {
+  const digits = sanitizeInteger(value).slice(0, 2);
+  if (!digits) return "";
+  return `${digits} anos`;
+}
+
 export function formatPhone(value) {
   const digits = sanitizeInteger(value).slice(0, 11);
   if (!digits) return "";
@@ -216,6 +230,8 @@ export function setupAutoCalculations(form) {
 export function setupVisualMasks(form) {
   const cpfField = form.querySelector('[name="cpf"]');
   const phoneField = form.querySelector('[name="phone"]');
+  const flowCycleField = form.querySelector('[name="flowCycle"]');
+  const coitarcaField = form.querySelector('[name="coitarca"]');
 
   if (cpfField) {
     cpfField.addEventListener("input", () => {
@@ -229,6 +245,20 @@ export function setupVisualMasks(form) {
       phoneField.value = formatPhone(phoneField.value);
     });
     phoneField.value = formatPhone(phoneField.value);
+  }
+
+  if (flowCycleField) {
+    flowCycleField.addEventListener("input", () => {
+      flowCycleField.value = formatFlowCycle(flowCycleField.value);
+    });
+    flowCycleField.value = formatFlowCycle(flowCycleField.value);
+  }
+
+  if (coitarcaField) {
+    coitarcaField.addEventListener("input", () => {
+      coitarcaField.value = formatCoitarca(coitarcaField.value);
+    });
+    coitarcaField.value = formatCoitarca(coitarcaField.value);
   }
 }
 

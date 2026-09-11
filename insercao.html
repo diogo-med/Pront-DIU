@@ -129,32 +129,11 @@
                 <label><input type="checkbox" name="analgesiaGel" /> Gel</label>
                 <label><input type="checkbox" name="analgesiaSpray" /> Spray</label>
                 <label><input type="checkbox" name="analgesiaInjectable" /> Injetável</label>
+                <label><input type="checkbox" name="analgesiaNotUsed" /> Não foi utilizado</label>
               </div>
             </div>
 
-            <div>
-              <strong style="display: block; margin-bottom: 5px;">Gel</strong>
-              <div class="field-group">
-                <label><input type="radio" name="gelUsed" value="Sim" /> Sim</label>
-                <label><input type="radio" name="gelUsed" value="Não" /> Não</label>
-              </div>
-            </div>
-
-            <div>
-              <strong style="display: block; margin-bottom: 5px;">Spray</strong>
-              <div class="field-group">
-                <label><input type="radio" name="sprayUsed" value="Sim" /> Sim</label>
-                <label><input type="radio" name="sprayUsed" value="Não" /> Não</label>
-              </div>
-            </div>
-
-            <div>
-              <strong style="display: block; margin-bottom: 5px;">Injetável</strong>
-              <div class="field-group">
-                <label><input type="radio" name="injectableUsed" value="Sim" /> Sim</label>
-                <label><input type="radio" name="injectableUsed" value="Não" /> Não</label>
-              </div>
-            </div>
+            <label><strong>Detalhes do analgésico</strong><input type="text" name="analgesiaDetails" /></label>
 
             <div>
               <strong style="display: block; margin-bottom: 5px;">Posição do útero</strong>
@@ -182,7 +161,7 @@
             <label><input type="checkbox" name="intercurrences" value="Sangramento importante" /> Sangramento importante</label>
             <label><input type="checkbox" name="intercurrences" value="DIU não inserido" /> DIU não inserido</label>
             <label><input type="checkbox" name="intercurrences" value="Sem intercorrências" /> Sem intercorrências</label>
-            <label class="span-2 inline-field"><strong>Motivo do não inserido</strong><input type="text" name="notInsertedReason" /></label>
+            <label class="span-2 inline-field"><strong>Motivo da não inserção</strong><input type="text" name="notInsertedReason" /></label>
             <label class="span-2 inline-field"><strong>Outras</strong><input type="text" name="otherIntercurrences" /></label>
           </div>
         </section>

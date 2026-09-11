@@ -14,7 +14,7 @@ const LEGACY_DRAFT_KEY = "prontdiu.form.v1";
 // Campos que pertencem à Triagem (início até a seção 1.5) num registro antigo (pré-divisão),
 // usados só para migrar dados já salvos para o novo formato { triagem, insercao }.
 const TRIAGEM_FIELD_NAMES = [
-  "attendanceDate", "teletriageDate", "recordNumber", "patientName", "birthDate", "age",
+  "attendanceDate", "triageDate", "recordNumber", "patientName", "birthDate", "age",
   "rg", "cpf", "cns", "religion", "phone", "occupation", "race", "education", "disability", "address",
   "motivation", "motivationOther",
   "healthConditions", "medications", "dum", "coitarca", "dysmenorrhea", "cycles", "flowCycle",
@@ -29,7 +29,7 @@ const TRIAGEM_FIELD_NAMES = [
 const INSERCAO_FIELD_NAMES = [
   "weight", "height", "bmi", "bloodPressure", "pelvicExam", "purulentCervicitis",
   "insertionType", "cervicalDilation", "painScale", "moment", "momentOther", "hysterometry",
-  "analgesiaGel", "analgesiaSpray", "analgesiaInjectable", "gelUsed", "sprayUsed", "injectableUsed",
+  "analgesiaGel", "analgesiaSpray", "analgesiaInjectable", "analgesiaNotUsed", "analgesiaDetails",
   "uterusPosition", "uterusPositionOther",
   "intercurrences", "notInsertedReason", "otherIntercurrences",
   "diagnosis", "diagnosisOther", "results", "resultsOther", "interventions", "interventionsOther",
