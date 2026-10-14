@@ -164,6 +164,7 @@ export function runMigrations() {
     await migrateFromLocalStorage();
     await migrateFlatRecordsToSplitShape();
     await migrateSingleDraftToSplitDrafts();
+    await migrateAttendanceDateToTriageDate();
   })();
 
   return migrationPromise;
@@ -224,4 +225,22 @@ async function migrateSingleDraftToSplitDrafts() {
   if (Object.keys(triagem).length > 0) await setTriagemDraft(triagem);
   if (Object.keys(insercao).length > 0) await setInsercaoDraft(insercao);
   await withStore(KV_STORE, "readwrite", (store) => store.delete(LEGACY_SINGLE_DRAFT_KEY));
+}
+
+// O campo "Data do atendimento" foi removido; a data da triagem passa a ocupar o lugar dele.
+function mergeAttendanceDate(triagem) {
+  if (!triagem || !("attendanceDate" in triagem)) return null;
+  const { attendanceDate, ...rest } = triagem;
+  return { ...rest, triageDate: rest.triageDate || attendanceDate || "" };
+}
+
+async function migrateAttendanceDateToTriageDate() {
+  const records = await getAllRecords();
+  for (const record of records) {
+    const triagem = mergeAttendanceDate(record?.triagem);
+    if (triagem) await putRecord({ ...record, triagem });
+  }
+
+  const draft = mergeAttendanceDate(await getTriagemDraft());
+  if (draft) await setTriagemDraft(draft);
 }

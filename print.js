@@ -34,7 +34,7 @@ export function buildIdentificacaoHtml(data) {
   return `
     <h2>1. Identificação</h2>
     <div class="grid">
-      <div class="item"><strong>Data do Atendimento:</strong> ${formatDate(data.attendanceDate)}</div>
+      <div class="item"><strong>Data da Triagem:</strong> ${formatDate(data.triageDate)}</div>
       <div class="item"><strong>N° Prontuário:</strong> ${formatValue(data.recordNumber)}</div>
       <div class="item-full"><strong>Nome:</strong> ${formatValue(data.patientName)}</div>
       <div class="item"><strong>Nascimento:</strong> ${formatDate(data.birthDate)} (${formatValue(data.age)} anos)</div>

@@ -9,7 +9,7 @@ export function escapeHtml(value) {
 
 export function formatDateOnly(isoString) {
   if (!isoString) return "Sem data";
-  return new Intl.DateTimeFormat("pt-BR", { dateStyle: "medium" }).format(new Date(isoString));
+  return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(isoString));
 }
 
 export function formatDateTime(isoString) {

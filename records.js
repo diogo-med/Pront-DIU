@@ -1,5 +1,6 @@
 import { getAllRecords, deleteRecordById, setEditingRecordId, runMigrations } from "./db.js";
 import { formatDateOnly, getRecordDisplayName, getRecordNumber, showToast } from "./ui.js";
+import { buildAnonymizedCsv, buildFormattedText, downloadFile } from "./export.js";
 
 const recordsList = document.getElementById("recordsList");
 const recordsEmpty = document.getElementById("recordsEmpty");
@@ -15,25 +16,32 @@ function openInsercaoForEdit(recordId) {
   window.location.href = "insercao.html";
 }
 
+function getPatientSlug(record) {
+  return (getRecordDisplayName(record) === "Nome não informado" ? "paciente" : getRecordDisplayName(record))
+    .replace(/\s+/g, "_")
+    .toLowerCase();
+}
+
 function exportTriagemJson(record) {
   const payload = {
     exportedAt: new Date().toISOString(),
     triagem: record.triagem,
   };
 
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const patientSlug = (record.triagem?.patientName || "paciente").trim().replace(/\s+/g, "_").toLowerCase();
-
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `triagem_${patientSlug}.json`;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
-
+  downloadFile(JSON.stringify(payload, null, 2), `triagem_${getPatientSlug(record)}.json`, "application/json");
   showToast("Dados da triagem exportados");
+}
+
+function exportRecordCsv(record) {
+  // O nome do arquivo também não pode identificar a paciente.
+  const fileId = getRecordNumber(record) || String(record.id ?? "").slice(0, 8) || "registro";
+  downloadFile(buildAnonymizedCsv(record), `prontuario_${fileId}_anonimizado.csv`, "text/csv;charset=utf-8");
+  showToast("CSV anonimizado exportado");
+}
+
+function exportRecordText(record) {
+  downloadFile(buildFormattedText(record), `prontuario_${getPatientSlug(record)}.txt`, "text/plain;charset=utf-8");
+  showToast("Texto formatado exportado");
 }
 
 async function deleteRecord(recordId) {
@@ -50,6 +58,15 @@ async function deleteRecord(recordId) {
 
   await renderRecords();
   showToast("Prontuário excluído");
+}
+
+function createActionButton(label, className, onClick) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = className;
+  button.textContent = label;
+  button.addEventListener("click", onClick);
+  return button;
 }
 
 function getStatusLabel(record) {
@@ -96,39 +113,32 @@ async function renderRecords() {
 
     content.append(title, secondary, meta);
 
-    const actions = document.createElement("div");
-    actions.className = "record-card-actions";
+    const mainActions = document.createElement("div");
+    mainActions.className = "record-card-actions-row";
+
+    const exportActions = document.createElement("div");
+    exportActions.className = "record-card-actions-row";
 
     if (record.triagem) {
-      const editTriagemButton = document.createElement("button");
-      editTriagemButton.type = "button";
-      editTriagemButton.className = "secondary";
-      editTriagemButton.textContent = "Editar Triagem";
-      editTriagemButton.addEventListener("click", () => openTriagemForEdit(record.id));
-      actions.append(editTriagemButton);
-
-      const exportButton = document.createElement("button");
-      exportButton.type = "button";
-      exportButton.className = "secondary";
-      exportButton.textContent = "Exportar JSON";
-      exportButton.addEventListener("click", () => exportTriagemJson(record));
-      actions.append(exportButton);
+      mainActions.append(createActionButton("Editar Triagem", "primary", () => openTriagemForEdit(record.id)));
+      exportActions.append(createActionButton("Exportar JSON", "secondary", () => exportTriagemJson(record)));
     }
 
-    const insercaoButton = document.createElement("button");
-    insercaoButton.type = "button";
-    insercaoButton.className = "secondary";
-    insercaoButton.textContent = record.insercao ? "Editar Inserção" : "Ir para Inserção";
-    insercaoButton.addEventListener("click", () => openInsercaoForEdit(record.id));
-    actions.append(insercaoButton);
+    mainActions.append(
+      createActionButton(record.insercao ? "Editar Inserção" : "Ir para Inserção", "primary", () =>
+        openInsercaoForEdit(record.id)
+      ),
+      createActionButton("Excluir", "primary danger", () => deleteRecord(record.id))
+    );
 
-    const deleteButton = document.createElement("button");
-    deleteButton.type = "button";
-    deleteButton.className = "secondary";
-    deleteButton.textContent = "Excluir";
-    deleteButton.addEventListener("click", () => deleteRecord(record.id));
-    actions.append(deleteButton);
+    exportActions.append(
+      createActionButton("Exportar CSV", "secondary", () => exportRecordCsv(record)),
+      createActionButton("Exportar texto", "secondary", () => exportRecordText(record))
+    );
 
+    const actions = document.createElement("div");
+    actions.className = "record-card-actions";
+    actions.append(mainActions, exportActions);
     card.append(content, actions);
     recordsList.append(card);
   }

@@ -1,4 +1,4 @@
-const CACHE_NAME = "prontdiu-cache-v2.1";
+const CACHE_NAME = "prontdiu-cache-v2.6";
 const ASSETS = [
   "./",
   "./index.html",
@@ -10,6 +10,7 @@ const ASSETS = [
   "./ui.js",
   "./form-utils.js",
   "./print.js",
+  "./export.js",
   "./manifest.webmanifest",
   "./icons/icon.png",
   "./icons/LOGO.png",

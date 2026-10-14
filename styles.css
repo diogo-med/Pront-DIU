@@ -432,14 +432,26 @@ label > span,
 }
 
 .record-card-actions {
+  display: grid;
+  align-content: center;
+  gap: 0.5rem;
+}
+
+.record-card-actions-row {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
 
-.record-card-actions .secondary {
+.record-card-actions button {
   white-space: nowrap;
+}
+
+.primary.danger {
+  background: linear-gradient(135deg, #dc2626, #991b1b);
+  box-shadow: 0 10px 28px rgba(220, 38, 38, 0.24);
 }
 
 .records-empty {
@@ -484,7 +496,7 @@ label > span,
     justify-items: start;
   }
 
-  .record-card-actions {
+  .record-card-actions-row {
     justify-content: flex-start;
   }
 }
