@@ -43,3 +43,17 @@ export function showToast(message) {
     window.setTimeout(() => toast.remove(), 200);
   }, 2200);
 }
+
+const FLASH_MESSAGE_KEY = "prontdiu.flashMessage.v1";
+
+// Mensagem a ser exibida na próxima página (ex.: "Triagem salva" depois do redirecionamento).
+export function setFlashMessage(message) {
+  sessionStorage.setItem(FLASH_MESSAGE_KEY, message);
+}
+
+export function showFlashMessage() {
+  const message = sessionStorage.getItem(FLASH_MESSAGE_KEY);
+  if (!message) return;
+  sessionStorage.removeItem(FLASH_MESSAGE_KEY);
+  showToast(message);
+}

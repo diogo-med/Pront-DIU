@@ -82,7 +82,11 @@ function openDatabase() {
     };
 
     request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
+    request.onerror = () => {
+      // Não guarda a falha em cache: a próxima operação tenta abrir o banco de novo.
+      dbPromise = null;
+      reject(request.error);
+    };
   });
 
   return dbPromise;
@@ -93,10 +97,12 @@ function withStore(storeName, mode, executor) {
     (db) =>
       new Promise((resolve, reject) => {
         const tx = db.transaction(storeName, mode);
-        const store = tx.objectStore(storeName);
-        const request = executor(store);
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
+        const request = executor(tx.objectStore(storeName));
+        // Só confirma depois do commit da transação: o "onsuccess" do request dispara antes
+        // de os dados estarem gravados, e erros de cota só aparecem no abort.
+        tx.oncomplete = () => resolve(request.result);
+        tx.onerror = () => reject(tx.error ?? request.error);
+        tx.onabort = () => reject(tx.error ?? request.error ?? new Error("Transação abortada"));
       })
   );
 }
@@ -111,6 +117,21 @@ export function getRecordById(id) {
 
 export function putRecord(record) {
   return withStore(RECORDS_STORE, "readwrite", (store) => store.put(record));
+}
+
+// Grava vários registros em uma única transação (tudo ou nada).
+export function putRecords(records) {
+  return openDatabase().then(
+    (db) =>
+      new Promise((resolve, reject) => {
+        const tx = db.transaction(RECORDS_STORE, "readwrite");
+        const store = tx.objectStore(RECORDS_STORE);
+        for (const record of records) store.put(record);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+        tx.onabort = () => reject(tx.error ?? new Error("Transação abortada"));
+      })
+  );
 }
 
 export function deleteRecordById(id) {
@@ -153,6 +174,19 @@ export function setEditingRecordId(recordId) {
   sessionStorage.setItem(EDITING_RECORD_KEY, recordId);
 }
 
+// Pede ao navegador para não apagar os dados locais sob pressão de armazenamento.
+// Funciona totalmente offline; alguns navegadores só concedem com o app instalado.
+export async function requestPersistentStorage() {
+  try {
+    if (!navigator.storage?.persist) return false;
+    if (await navigator.storage.persisted()) return true;
+    return await navigator.storage.persist();
+  } catch (error) {
+    console.warn("Não foi possível solicitar armazenamento persistente", error);
+    return false;
+  }
+}
+
 let migrationPromise = null;
 
 // Migra dados de versões anteriores do app: localStorage -> IndexedDB, registro único
@@ -164,7 +198,7 @@ export function runMigrations() {
     await migrateFromLocalStorage();
     await migrateFlatRecordsToSplitShape();
     await migrateSingleDraftToSplitDrafts();
-    await migrateAttendanceDateToTriageDate();
+    await migrateTriagemFields();
   })();
 
   return migrationPromise;
@@ -227,20 +261,36 @@ async function migrateSingleDraftToSplitDrafts() {
   await withStore(KV_STORE, "readwrite", (store) => store.delete(LEGACY_SINGLE_DRAFT_KEY));
 }
 
-// O campo "Data do atendimento" foi removido; a data da triagem passa a ocupar o lugar dele.
-function mergeAttendanceDate(triagem) {
-  if (!triagem || !("attendanceDate" in triagem)) return null;
-  const { attendanceDate, ...rest } = triagem;
-  return { ...rest, triageDate: rest.triageDate || attendanceDate || "" };
+// Ajustes de campos da Triagem entre versões:
+// - "Data do atendimento" foi removido; a data da triagem passa a ocupar o lugar dele.
+// - O valor do DIU de cobre era gravado como "Tcu"; o correto é "TCu".
+function migrateTriagemData(triagem) {
+  if (!triagem || typeof triagem !== "object") return null;
+  let result = null;
+
+  if ("attendanceDate" in triagem) {
+    const { attendanceDate, ...rest } = triagem;
+    result = { ...rest, triageDate: rest.triageDate || attendanceDate || "" };
+  }
+
+  if ((result ?? triagem).chosenIud === "Tcu") {
+    result = { ...(result ?? triagem), chosenIud: "TCu" };
+  }
+
+  return result;
 }
 
-async function migrateAttendanceDateToTriageDate() {
+async function migrateTriagemFields() {
   const records = await getAllRecords();
   for (const record of records) {
-    const triagem = mergeAttendanceDate(record?.triagem);
+    const triagem = migrateTriagemData(record?.triagem);
     if (triagem) await putRecord({ ...record, triagem });
   }
 
-  const draft = mergeAttendanceDate(await getTriagemDraft());
-  if (draft) await setTriagemDraft(draft);
+  const triagemDraft = migrateTriagemData(await getTriagemDraft());
+  if (triagemDraft) await setTriagemDraft(triagemDraft);
+
+  const insercaoDraft = await getInsercaoDraft();
+  const linkedTriagem = migrateTriagemData(insercaoDraft?._linkedTriagem);
+  if (linkedTriagem) await setInsercaoDraft({ ...insercaoDraft, _linkedTriagem: linkedTriagem });
 }

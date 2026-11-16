@@ -255,39 +255,49 @@ export function setupVisualMasks(form) {
   }
 
   if (coitarcaField) {
-    coitarcaField.addEventListener("input", () => {
-      coitarcaField.value = formatCoitarca(coitarcaField.value);
+    // O sufixo " anos" é recolocado a cada tecla; ao apagar, é preciso remover um dígito,
+    // senão o backspace só apagaria uma letra do sufixo e o campo nunca esvaziaria.
+    let lastDigits = sanitizeInteger(coitarcaField.value).slice(0, 2);
+    coitarcaField.addEventListener("input", (event) => {
+      let digits = sanitizeInteger(coitarcaField.value).slice(0, 2);
+      if (String(event.inputType ?? "").startsWith("delete") && digits === lastDigits) {
+        digits = digits.slice(0, -1);
+      }
+      lastDigits = digits;
+      coitarcaField.value = formatCoitarca(digits);
     });
     coitarcaField.value = formatCoitarca(coitarcaField.value);
   }
 }
 
-export function registerServiceWorker() {
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js")
-      .then((registration) => {
-        registration.addEventListener("updatefound", () => {
-          const newWorker = registration.installing;
-          if (newWorker) {
-            newWorker.addEventListener("statechange", () => {
-              if (newWorker.state === "activated") {
-                console.log("Nova versão detectada! Recarregando...");
-                window.location.reload();
-              }
-            });
-          }
-        });
-      })
-      .catch((error) => {
-        console.warn("Service worker não registrado", error);
-      });
+// Permite desmarcar um radio clicando de novo na opção já marcada (ou com a barra de espaço).
+export function setupRadioDeselect(form) {
+  let checkedBeforeInteraction = new Set();
+  const snapshot = () => {
+    checkedBeforeInteraction = new Set(form.querySelectorAll('input[type="radio"]:checked'));
+  };
 
-    let refreshing = false;
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
-      if (!refreshing) {
-        refreshing = true;
-        window.location.reload();
-      }
-    });
-  }
+  form.addEventListener("pointerdown", snapshot, true);
+  form.addEventListener("keydown", snapshot, true);
+
+  form.addEventListener("click", (event) => {
+    const radio = event.target;
+    if (!(radio instanceof HTMLInputElement) || radio.type !== "radio") return;
+    if (!checkedBeforeInteraction.has(radio)) return;
+
+    checkedBeforeInteraction.delete(radio);
+    radio.checked = false;
+    radio.dispatchEvent(new Event("input", { bubbles: true }));
+    radio.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+}
+
+// O service worker atualiza os arquivos em segundo plano e a versão nova passa a valer na
+// próxima abertura. A página nunca é recarregada sozinha, para não interromper um preenchimento.
+export function registerServiceWorker() {
+  if (!("serviceWorker" in navigator)) return;
+
+  navigator.serviceWorker.register("sw.js").catch((error) => {
+    console.warn("Service worker não registrado", error);
+  });
 }

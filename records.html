@@ -10,33 +10,47 @@
   <link rel="icon" href="icons/icon.png" type="image/png" />
   <link rel="apple-touch-icon" href="icons/icon.png" />
   <link rel="stylesheet" href="styles.css" />
-  <title>Prontuários — ProntuarioDIU</title>
+  <title>ProntDIU — Prontuários</title>
 </head>
 <body>
   <div class="app-shell">
-    <header class="hero">
-      <div>
-        <img src="icons/LOGO.png" alt="Logo Prontuario-DIU" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 8px;" />
-        <p class="eyebrow">ProntuarioDIU</p>
-        <h1>Prontuários salvos</h1>
-        <p class="lead">Lista de prontuários salvos no dispositivo. Abra para editar ou exclua registros.</p>
+    <header class="page-header">
+      <div class="page-header-top">
+        <div class="page-header-brand">
+          <img src="icons/LOGO.png" alt="Logo ProntDIU" />
+          <p class="eyebrow">ProntDIU</p>
+        </div>
+        <div class="hero-actions">
+          <a href="index.html?new=true" class="primary">Nova Triagem</a>
+          <a href="insercao.html?new=true" class="secondary">Nova Inserção</a>
+        </div>
       </div>
-      <div class="hero-actions utility-actions">
-        <a href="index.html?new=true" class="primary">Nova Triagem</a>
-        <a href="insercao.html?new=true" class="secondary">Nova Inserção</a>
-      </div>
+
+      <h1 class="page-header-title">Prontuários salvos</h1>
     </header>
 
     <main class="content">
       <section class="records-header card">
         <div>
-          <p class="section-kicker">Prontuários</p>
-          <h2>Lista de prontuários</h2>
-          <p class="lead records-lead">Os prontuários aparecem em ordem de criação e podem ser reabertos para edição.</p>
+          <p class="section-kicker">Lista de prontuários</p>
+          <p class="lead records-lead">Prontuários salvos neste dispositivo, do mais recente para o mais antigo. Abra para editar, exporte ou exclua.</p>
         </div>
         <div class="records-summary">
           <strong id="recordsCount">0</strong>
           <span>itens salvos</span>
+        </div>
+      </section>
+
+      <section class="records-toolbar card">
+        <label class="records-search">
+          <strong>Buscar</strong>
+          <input type="search" id="recordsSearch" placeholder="Nome ou n° do prontuário" autocomplete="off" />
+        </label>
+        <div class="records-toolbar-actions">
+          <button type="button" class="secondary" id="exportAllCsvBtn">Exportar todos (CSV)</button>
+          <button type="button" class="secondary" id="backupBtn">Fazer backup (JSON)</button>
+          <button type="button" class="secondary" id="restoreBtn">Restaurar backup</button>
+          <input type="file" id="restoreFile" accept=".json,application/json" hidden />
         </div>
       </section>
 

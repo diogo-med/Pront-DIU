@@ -1,6 +1,6 @@
 {
-  "name": "ProntuarioDIU",
-  "short_name": "ProntuarioDIU",
+  "name": "ProntDIU",
+  "short_name": "ProntDIU",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",

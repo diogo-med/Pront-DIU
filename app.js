@@ -1,5 +1,5 @@
 import {
-  getAllRecords,
+  getRecordById,
   putRecord,
   deleteRecordById,
   getTriagemDraft,
@@ -7,124 +7,191 @@ import {
   clearTriagemDraft,
   getEditingRecordId,
   setEditingRecordId,
+  requestPersistentStorage,
   runMigrations,
 } from "./db.js";
-import { showToast } from "./ui.js";
+import { showToast, setFlashMessage, getRecordDisplayName } from "./ui.js";
 import {
   collectFormData,
   restoreFormData,
   setupAutoCalculations,
   setupVisualMasks,
+  setupRadioDeselect,
   registerServiceWorker,
 } from "./form-utils.js";
+import {
+  generateRecordId,
+  hasContent,
+  createAutoSaver,
+  setupDraftFlush,
+  removeNewParam,
+  setFormMode,
+  markDraftSaved,
+  clearDraftStatus,
+  askToDeleteAfterPrint,
+} from "./form-page.js";
 import { buildIdentificacaoHtml, buildSubjetivoHtml, openPrintWindow } from "./print.js";
 
 const form = document.getElementById("diuForm");
 const clearBtn = document.getElementById("clearBtn");
 const printBtn = document.getElementById("printBtn");
+const saveBtn = document.getElementById("saveBtn");
 
-let saveTimer = null;
+const NEW_MODE_TEXT = "Nova triagem (ainda não salva)";
 
-async function loadDraft() {
-  const draft = await getTriagemDraft();
-  if (!draft || typeof draft !== "object") return false;
-  restoreFormData(form, draft);
-  return true;
-}
+let saving = false;
 
-async function saveDraft(data = collectFormData(form)) {
+// O rascunho guarda o id do prontuário em edição ("_recordId"), para que alterações não salvas
+// de um prontuário já existente sejam retomadas no registro certo, sem criar duplicatas.
+async function saveDraft() {
   try {
-    await setTriagemDraft(data);
+    await setTriagemDraft({ ...collectFormData(form), _recordId: getEditingRecordId() });
+    markDraftSaved();
   } catch (error) {
     console.error("Falha ao salvar rascunho", error);
     showToast("Erro ao salvar rascunho localmente");
   }
 }
 
-function generateRecordId() {
-  if (window.crypto && typeof window.crypto.randomUUID === "function") {
-    return window.crypto.randomUUID();
-  }
-  return `record-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+const autoSaver = createAutoSaver(saveDraft);
+
+function describeDraft(draft) {
+  const name = String(draft?.patientName ?? "").trim();
+  return name ? `de ${name}` : "sem nome informado";
 }
 
 async function loadCurrentFormState() {
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.has("new")) {
-    await clearCurrentForm();
-    return false;
+  const draft = await getTriagemDraft();
+  const hasDraft = hasContent(draft);
+
+  if (new URLSearchParams(window.location.search).has("new")) {
+    removeNewParam();
+    const discard =
+      !hasDraft ||
+      window.confirm(
+        `Há uma triagem ${describeDraft(draft)} com preenchimento não salvo neste dispositivo.\n\n` +
+          "Deseja descartá-lo e começar uma nova triagem?\n\nCancelar mantém o preenchimento atual."
+      );
+    if (discard) {
+      await resetForm();
+      return;
+    }
   }
 
-  const editingRecordId = getEditingRecordId();
+  const draftRecordId = hasDraft ? draft._recordId ?? null : null;
+  let editingRecordId = getEditingRecordId();
+  // Sem prontuário aberto nesta sessão, retoma o prontuário ao qual o rascunho pertence.
+  if (!editingRecordId && draftRecordId) editingRecordId = draftRecordId;
+
   if (editingRecordId) {
-    const records = await getAllRecords();
-    const record = records.find((item) => item.id === editingRecordId);
+    const record = await getRecordById(editingRecordId);
     if (record && record.triagem) {
-      restoreFormData(form, record.triagem);
-      return true;
+      let useDraft = hasDraft && draftRecordId === editingRecordId;
+
+      if (hasDraft && !useDraft) {
+        const discard = window.confirm(
+          `Há uma triagem ${describeDraft(draft)} com preenchimento não salvo neste dispositivo.\n\n` +
+            `Deseja descartá-lo para abrir a triagem de ${getRecordDisplayName(record)}?\n\n` +
+            "Cancelar volta ao preenchimento não salvo."
+        );
+        if (discard) {
+          await clearTriagemDraft();
+        } else {
+          return restoreUnsavedDraft(draft);
+        }
+      }
+
+      setEditingRecordId(record.id);
+      restoreFormData(form, useDraft ? draft : record.triagem);
+      setFormMode(
+        `Editando triagem salva de ${getRecordDisplayName(record)}` +
+          (useDraft ? " (alterações não salvas recuperadas)" : "")
+      );
+      return;
     }
     setEditingRecordId(null);
   }
 
-  return loadDraft();
-}
-
-async function persistRecord() {
-  const formData = collectFormData(form);
-  const now = new Date().toISOString();
-  const editingRecordId = getEditingRecordId();
-
-  let record;
-  let isUpdate = false;
-
-  if (editingRecordId) {
-    const records = await getAllRecords();
-    const existingRecord = records.find((item) => item.id === editingRecordId);
-    if (existingRecord) {
-      isUpdate = true;
-      record = { ...existingRecord, updatedAt: now, triagem: formData };
-    }
-  }
-
-  if (!record) {
-    record = {
-      id: generateRecordId(),
-      createdAt: now,
-      updatedAt: now,
-      triagem: formData,
-      insercao: null,
-    };
-  }
-
-  try {
-    await putRecord(record);
-    await saveDraft(formData);
-  } catch (error) {
-    console.error("Falha ao salvar triagem", error);
-    showToast("Erro ao salvar triagem localmente");
+  if (hasDraft) {
+    await restoreUnsavedDraft(draft);
     return;
   }
 
-  setEditingRecordId(record.id);
-  showToast(isUpdate ? "Triagem atualizada" : "Triagem salva");
-  location.href = "records.html";
+  setFormMode(NEW_MODE_TEXT);
 }
 
-async function clearCurrentForm({ silent = false } = {}) {
-  if (saveTimer) {
-    window.clearTimeout(saveTimer);
-    saveTimer = null;
-  }
+// Restaura um rascunho que não corresponde ao prontuário aberto nesta sessão.
+async function restoreUnsavedDraft(draft) {
+  const draftRecordId = draft._recordId ?? null;
+  const record = draftRecordId ? await getRecordById(draftRecordId) : null;
 
+  restoreFormData(form, draft);
+
+  if (record && record.triagem) {
+    setEditingRecordId(record.id);
+    setFormMode(`Editando triagem salva de ${getRecordDisplayName(record)} (alterações não salvas recuperadas)`);
+  } else {
+    setEditingRecordId(null);
+    setFormMode(`${NEW_MODE_TEXT} — rascunho recuperado`);
+  }
+}
+
+async function persistRecord() {
+  if (saving) return;
+  saving = true;
+  if (saveBtn) saveBtn.disabled = true;
+  autoSaver.cancel();
+
+  try {
+    const formData = collectFormData(form);
+    const now = new Date().toISOString();
+    const editingRecordId = getEditingRecordId();
+    const existingRecord = editingRecordId ? await getRecordById(editingRecordId) : null;
+
+    let record;
+    if (existingRecord) {
+      record = { ...existingRecord, updatedAt: now, triagem: formData };
+      // Mantém a identificação gravada na Inserção igual à da Triagem.
+      if (existingRecord.insercao) {
+        record.insercao = {
+          ...existingRecord.insercao,
+          recordNumber: formData.recordNumber,
+          patientName: formData.patientName,
+          birthDate: formData.birthDate,
+        };
+      }
+    } else {
+      record = {
+        id: generateRecordId(),
+        createdAt: now,
+        updatedAt: now,
+        triagem: formData,
+        insercao: null,
+      };
+    }
+
+    await putRecord(record);
+    // O conteúdo já está no prontuário; o rascunho não é mais necessário.
+    await clearTriagemDraft();
+    setEditingRecordId(null);
+    requestPersistentStorage();
+    setFlashMessage(existingRecord ? "Triagem atualizada" : "Triagem salva");
+    window.location.href = "records.html";
+  } catch (error) {
+    console.error("Falha ao salvar triagem", error);
+    showToast("Erro ao salvar triagem localmente");
+    saving = false;
+    if (saveBtn) saveBtn.disabled = false;
+  }
+}
+
+async function resetForm() {
+  autoSaver.cancel();
   form.reset();
   setEditingRecordId(null);
   await clearTriagemDraft();
-  const url = new URL(window.location.href);
-  url.search = "";
-  window.history.replaceState({}, "", url.toString());
-  if (!silent) {
-    showToast("Formulário limpo");
-  }
+  clearDraftStatus();
+  setFormMode(NEW_MODE_TEXT);
 }
 
 async function deleteRecordAfterPrint() {
@@ -134,48 +201,12 @@ async function deleteRecordAfterPrint() {
     if (editingRecordId) {
       await deleteRecordById(editingRecordId);
     }
-    await clearCurrentForm({ silent: true });
+    await resetForm();
     showToast("Prontuário excluído deste dispositivo");
   } catch (error) {
     console.error("Falha ao excluir prontuário após impressão", error);
     showToast("Erro ao excluir prontuário");
   }
-}
-
-function askToDeleteAfterPrint() {
-  const confirmed = window.confirm(
-    "Impressão concluída. Deseja excluir este prontuário deste dispositivo agora?"
-  );
-  if (confirmed) {
-    deleteRecordAfterPrint();
-  }
-}
-
-function watchPrintWindowForDeletePrompt(printWindow) {
-  let prompted = false;
-  let pollId = null;
-
-  const triggerPrompt = () => {
-    if (prompted) return;
-    prompted = true;
-    if (pollId) window.clearInterval(pollId);
-    askToDeleteAfterPrint();
-  };
-
-  printWindow.addEventListener("afterprint", triggerPrompt);
-
-  pollId = window.setInterval(() => {
-    if (printWindow.closed) {
-      triggerPrompt();
-    }
-  }, 500);
-}
-
-function scheduleAutoSave() {
-  window.clearTimeout(saveTimer);
-  saveTimer = window.setTimeout(() => {
-    saveDraft();
-  }, 700);
 }
 
 function handlePrintAction() {
@@ -185,7 +216,7 @@ function handlePrintAction() {
     const printWindow = openPrintWindow(bodyHtml);
 
     if (printWindow) {
-      watchPrintWindowForDeletePrompt(printWindow);
+      askToDeleteAfterPrint(printWindow, deleteRecordAfterPrint);
     } else {
       showToast("O bloqueador de pop-ups impediu a impressão.");
     }
@@ -195,18 +226,22 @@ function handlePrintAction() {
   }
 }
 
-form.addEventListener("input", scheduleAutoSave);
-form.addEventListener("change", scheduleAutoSave);
+form.addEventListener("input", autoSaver.schedule);
+form.addEventListener("change", autoSaver.schedule);
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   persistRecord();
 });
 
 if (clearBtn) {
-  clearBtn.addEventListener("click", () => {
-    const confirmed = window.confirm("Deseja limpar o formulário e apagar o rascunho salvo?");
+  clearBtn.addEventListener("click", async () => {
+    const confirmed = window.confirm(
+      "Deseja limpar o formulário e apagar o rascunho salvo?" +
+        (getEditingRecordId() ? "\n\nO prontuário já salvo não será excluído." : "")
+    );
     if (confirmed) {
-      clearCurrentForm();
+      await resetForm();
+      showToast("Formulário limpo");
     }
   });
 }
@@ -215,17 +250,13 @@ if (printBtn) {
   printBtn.addEventListener("click", handlePrintAction);
 }
 
-window.addEventListener("beforeunload", () => {
-  if (saveTimer) {
-    window.clearTimeout(saveTimer);
-    saveDraft();
-  }
-});
+setupDraftFlush(autoSaver);
 
 (async function init() {
   await runMigrations();
   await loadCurrentFormState();
   setupAutoCalculations(form);
   setupVisualMasks(form);
+  setupRadioDeselect(form);
   registerServiceWorker();
 })();

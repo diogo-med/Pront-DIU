@@ -10,7 +10,7 @@
   <link rel="icon" href="icons/icon.png" type="image/png" />
   <link rel="apple-touch-icon" href="icons/icon.png" />
   <link rel="stylesheet" href="styles.css" />
-  <title>Prontuario-DIU — Triagem</title>
+  <title>ProntDIU — Triagem</title>
 </head>
 <body>
   <div class="app-shell">
@@ -18,8 +18,8 @@
     <header class="page-header">
       <div class="page-header-top">
         <div class="page-header-brand">
-          <img src="icons/LOGO.png" alt="Logo Prontuario-DIU" />
-          <p class="eyebrow">Prontuario-DIU</p>
+          <img src="icons/LOGO.png" alt="Logo ProntDIU" />
+          <p class="eyebrow">ProntDIU</p>
         </div>
         <div class="hero-actions">
           <a href="records.html" class="secondary" id="recordsBtn">Prontuários</a>
@@ -29,6 +29,7 @@
       </div>
 
       <h1 class="page-header-title">Triagem — Ficha clínica de consulta de enfermagem para inserção do DIU</h1>
+      <p id="formStatus" class="form-status" role="status"></p>
     </header>
 
     <main class="content">
@@ -309,7 +310,7 @@
             <div>
               <strong style="display: block; margin-bottom: 5px;">DIU escolhido</strong>
               <div class="field-group">
-                <label><input type="radio" name="chosenIud" value="Tcu" /> TCu</label>
+                <label><input type="radio" name="chosenIud" value="TCu" /> TCu</label>
                 <label><input type="radio" name="chosenIud" value="Levonorgestrel" /> Levonorgestrel</label>
               </div>
             </div>

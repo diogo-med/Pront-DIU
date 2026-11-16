@@ -1,26 +1,29 @@
-const CACHE_NAME = "prontdiu-cache-v2.6";
+const CACHE_NAME = "prontdiu-cache-v3";
 const ASSETS = [
   "./",
   "./index.html",
   "./insercao.html",
+  "./records.html",
   "./styles.css",
   "./app.js",
   "./insercao.js",
+  "./records.js",
   "./db.js",
   "./ui.js",
   "./form-utils.js",
+  "./form-page.js",
   "./print.js",
   "./export.js",
   "./manifest.webmanifest",
   "./icons/icon.png",
-  "./icons/LOGO.png",
-  "./records.html",
-  "./records.js"
+  "./icons/LOGO.png"
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => cache.addAll(ASSETS.map((asset) => new Request(asset, { cache: "reload" }))))
   );
   self.skipWaiting();
 });
@@ -34,21 +37,35 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
+// Estratégia "stale-while-revalidate": responde na hora com o que está em cache (funciona
+// sempre offline) e, havendo rede, atualiza o cache em segundo plano para a próxima abertura.
+// Assim não é preciso trocar CACHE_NAME a cada publicação.
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) return cachedResponse;
+  const url = new URL(event.request.url);
+  if (url.origin !== self.location.origin) return;
 
-      return fetch(event.request)
-        .then((networkResponse) => {
-          const responseClone = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
-          return networkResponse;
-        })
-        .catch(() => caches.match("./index.html"));
-    })
-  );
+  // Parâmetros como "?new=true" não mudam o arquivo servido; a chave do cache os ignora.
+  url.search = "";
+  url.hash = "";
+
+  event.respondWith(respond(event, url.href));
 });
 
+async function respond(event, cacheKey) {
+  const cache = await caches.open(CACHE_NAME);
+  const cached = await cache.match(cacheKey);
+
+  const refresh = fetch(cacheKey, { cache: "no-cache" }).then(async (response) => {
+    if (response.ok) await cache.put(cacheKey, response.clone());
+    return response;
+  });
+
+  if (cached) {
+    event.waitUntil(refresh.catch(() => {}));
+    return cached;
+  }
+
+  return refresh;
+}

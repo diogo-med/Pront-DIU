@@ -136,21 +136,37 @@ function escapeCsvCell(value) {
   return /[";\n\r]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
 }
 
-export function buildAnonymizedCsv(record) {
+function buildCsvHeader() {
   const header = ["ID do registro", "Criado em"];
-  const row = [record.id ?? "", record.createdAt ? formatDateOnly(record.createdAt) : ""];
+  for (const section of SECTIONS) {
+    for (const field of section.fields) {
+      if (!IDENTIFYING_FIELDS.has(field.key)) header.push(field.label);
+    }
+  }
+  return header;
+}
 
+function buildCsvRow(record) {
+  const row = [record.id ?? "", record.createdAt ? formatDateOnly(record.createdAt) : ""];
   for (const section of SECTIONS) {
     const data = getSourceData(record, section.source);
     for (const field of section.fields) {
       if (IDENTIFYING_FIELDS.has(field.key)) continue;
-      header.push(field.label);
       row.push(formatPlainValue(data[field.key], field.type));
     }
   }
+  return row;
+}
 
-  const lines = [header, row].map((cells) => cells.map(escapeCsvCell).join(";"));
-  return `﻿${lines.join("\r\n")}\r\n`;
+// Uma linha por prontuário, sempre com as mesmas colunas. O CSV de um único prontuário sai sem
+// a linha de cabeçalho (para ser colado em uma planilha já existente); o CSV consolidado de
+// todos os prontuários leva o cabeçalho uma única vez.
+export function buildAnonymizedCsv(records, { includeHeader = false } = {}) {
+  const rows = records.map(buildCsvRow);
+  if (includeHeader) rows.unshift(buildCsvHeader());
+
+  const lines = rows.map((cells) => cells.map(escapeCsvCell).join(";"));
+  return `\ufeff${lines.join("\r\n")}\r\n`;
 }
 
 export function buildFormattedText(record) {
@@ -171,15 +187,64 @@ export function buildFormattedText(record) {
   return lines.join("\n");
 }
 
-export function downloadFile(content, filename, mimeType) {
-  const blob = new Blob([content], { type: mimeType });
-  const url = URL.createObjectURL(blob);
+export function buildBackupJson(records) {
+  return JSON.stringify({ app: "ProntDIU", type: "backup", exportedAt: new Date().toISOString(), records }, null, 2);
+}
 
+const FILE_TYPE_DESCRIPTIONS = {
+  "application/json": "Arquivo JSON",
+  "text/csv": "Planilha CSV",
+  "text/plain": "Arquivo de texto",
+};
+
+function isAbort(error) {
+  return error?.name === "AbortError";
+}
+
+// Salva um arquivo deixando a pessoa escolher o destino sempre que o navegador permitir:
+// 1. Chrome/Edge no computador (Windows, Linux, macOS): janela "Salvar como".
+// 2. Celular/tablet (Android, iOS): menu de compartilhamento (Arquivos, Drive, etc.).
+// 3. Demais casos: download normal, na pasta de downloads configurada no navegador.
+// Retorna false se a pessoa cancelou.
+export async function saveFile(content, filename, mimeType) {
+  const baseType = mimeType.split(";")[0].trim();
+  const blob = new Blob([content], { type: mimeType });
+
+  if (typeof window.showSaveFilePicker === "function") {
+    try {
+      const extension = filename.slice(filename.lastIndexOf("."));
+      const handle = await window.showSaveFilePicker({
+        suggestedName: filename,
+        types: [{ description: FILE_TYPE_DESCRIPTIONS[baseType] ?? "Arquivo", accept: { [baseType]: [extension] } }],
+      });
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      return true;
+    } catch (error) {
+      if (isAbort(error)) return false;
+      console.warn("Janela de salvar indisponível; usando download normal", error);
+    }
+  } else if (window.matchMedia?.("(pointer: coarse)").matches && typeof navigator.canShare === "function") {
+    try {
+      const file = new File([blob], filename, { type: baseType });
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: filename });
+        return true;
+      }
+    } catch (error) {
+      if (isAbort(error)) return false;
+      console.warn("Compartilhamento indisponível; usando download normal", error);
+    }
+  }
+
+  const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
   link.download = filename;
   document.body.appendChild(link);
   link.click();
   link.remove();
-  URL.revokeObjectURL(url);
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  return true;
 }
