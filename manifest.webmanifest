@@ -9,10 +9,23 @@
   "description": "PWA para preenchimento da ficha clínica de consulta de enfermagem para inserção do DIU.",
   "icons": [
     {
-      "src": "icons/icon.png",
-      "sizes": "192x192 512x512",
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "lang": "pt-BR"
 }

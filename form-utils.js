@@ -42,10 +42,19 @@ export function formatCpf(value) {
   return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
 }
 
+// "dias de fluxo/dias do ciclo", com 1 ou 2 dígitos de cada lado. A barra digitada é respeitada
+// ("5/28"); sem barra, ela entra sozinha depois do segundo dígito ("0528" -> "05/28").
 export function formatFlowCycle(value) {
-  const digits = sanitizeInteger(value).slice(0, 4);
-  if (!digits) return "";
+  const text = String(value ?? "");
+  const slashIndex = text.indexOf("/");
 
+  if (slashIndex >= 0) {
+    const flow = sanitizeInteger(text.slice(0, slashIndex)).slice(0, 2);
+    const cycle = sanitizeInteger(text.slice(slashIndex + 1)).slice(0, 2);
+    return flow ? `${flow}/${cycle}` : cycle;
+  }
+
+  const digits = sanitizeInteger(text).slice(0, 4);
   if (digits.length <= 2) return digits;
   return `${digits.slice(0, 2)}/${digits.slice(2)}`;
 }

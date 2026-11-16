@@ -1,4 +1,4 @@
-const CACHE_NAME = "prontdiu-cache-v3";
+const CACHE_NAME = "prontdiu-cache-v4";
 const ASSETS = [
   "./",
   "./index.html",
@@ -15,7 +15,10 @@ const ASSETS = [
   "./print.js",
   "./export.js",
   "./manifest.webmanifest",
-  "./icons/icon.png",
+  "./icons/icon-192.png",
+  "./icons/icon-512.png",
+  "./icons/icon-maskable-512.png",
+  "./icons/apple-touch-icon.png",
   "./icons/LOGO.png"
 ];
 

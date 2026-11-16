@@ -64,6 +64,15 @@ export function setupDraftFlush(autoSaver) {
   }
 }
 
+// O atributo "required" aceita um nome só com espaços; esta checagem cobre esse caso e também
+// campos que ficam fora do <form> (identificação da página de Inserção).
+export function validateRequiredText(field, message) {
+  if (!field) return true;
+  field.setCustomValidity(field.value.trim() ? "" : message);
+  field.addEventListener("input", () => field.setCustomValidity(""), { once: true });
+  return field.reportValidity();
+}
+
 export function removeNewParam() {
   const url = new URL(window.location.href);
   url.search = "";

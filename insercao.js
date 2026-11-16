@@ -25,6 +25,7 @@ import {
   createAutoSaver,
   setupDraftFlush,
   removeNewParam,
+  validateRequiredText,
   setFormMode,
   markDraftSaved,
   clearDraftStatus,
@@ -207,6 +208,7 @@ async function restoreUnsavedDraft(draft) {
 
 async function persistRecord() {
   if (saving) return;
+  if (!validateRequiredText(identificationFields.patientName, "Informe o nome da paciente.")) return;
   saving = true;
   if (saveBtn) saveBtn.disabled = true;
   autoSaver.cancel();

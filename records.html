@@ -7,8 +7,8 @@
   <meta name="description" content="PWA para preenchimento da ficha clínica de consulta de enfermagem para inserção do DIU." />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';" />
   <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="icon" href="icons/icon.png" type="image/png" />
-  <link rel="apple-touch-icon" href="icons/icon.png" />
+  <link rel="icon" href="icons/icon-192.png" type="image/png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
   <link rel="stylesheet" href="styles.css" />
   <title>ProntDIU — Prontuários</title>
 </head>
@@ -32,7 +32,7 @@
     <main class="content">
       <section class="records-header card">
         <div>
-          <p class="section-kicker">Lista de prontuários</p>
+          <h2 class="section-kicker">Lista de prontuários</h2>
           <p class="lead records-lead">Prontuários salvos neste dispositivo, do mais recente para o mais antigo. Abra para editar, exporte ou exclua.</p>
         </div>
         <div class="records-summary">
@@ -64,7 +64,7 @@
   </div>
 
   <template id="toastTemplate">
-    <div class="toast"></div>
+    <div class="toast" role="status" aria-live="polite"></div>
   </template>
 
   <script src="records.js" type="module"></script>
