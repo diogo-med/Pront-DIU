@@ -179,6 +179,53 @@ export function restoreFormData(form, data) {
   }
 }
 
+// PA em dois campos numéricos (sistólica e diastólica), gravada em "bloodPressure" como "120x80".
+// Deve ser chamada depois de o formulário ser preenchido com os dados salvos.
+export function setupBloodPressure(form) {
+  const stored = form.querySelector('[name="bloodPressure"]');
+  const systolic = form.querySelector("#bpSystolic");
+  const diastolic = form.querySelector("#bpDiastolic");
+  if (!stored || !systolic || !diastolic) return;
+
+  const match = stored.value.trim().match(/^(\d{1,3})\s*[x×/]\s*(\d{1,3})/i);
+  if (match) {
+    systolic.value = match[1];
+    diastolic.value = match[2];
+  }
+
+  const update = () => {
+    const hasValue = systolic.value !== "" || diastolic.value !== "";
+    stored.value = hasValue ? `${systolic.value}x${diastolic.value}` : "";
+    // Preenchido um dos valores, o outro passa a ser obrigatório.
+    systolic.required = diastolic.value !== "";
+    diastolic.required = systolic.value !== "";
+  };
+
+  systolic.addEventListener("input", update);
+  diastolic.addEventListener("input", update);
+  form.addEventListener("reset", () => {
+    systolic.required = false;
+    diastolic.required = false;
+  });
+}
+
+// Opção que não pode ser combinada com as demais do grupo (ex.: "Sem intercorrências"):
+// marcá-la desmarca as outras, e marcar qualquer outra a desmarca. As demais combinam entre si.
+export function setupExclusiveOption(exclusive, others) {
+  if (!exclusive || others.length === 0) return;
+
+  exclusive.addEventListener("change", () => {
+    if (!exclusive.checked) return;
+    for (const other of others) other.checked = false;
+  });
+
+  for (const other of others) {
+    other.addEventListener("change", () => {
+      if (other.checked) exclusive.checked = false;
+    });
+  }
+}
+
 export function calculateBMI(form) {
   const weightField = form.querySelector('[name="weight"]');
   const heightField = form.querySelector('[name="height"]');

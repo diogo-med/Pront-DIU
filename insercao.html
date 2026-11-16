@@ -60,7 +60,16 @@
           <div class="grid two-cols">
             <label><strong>Peso (kg)</strong><input type="number" step="0.1" name="weight" /></label>
             <label><strong>Altura (cm)</strong><input type="number" step="0.1" name="height" /></label>
-            <label><strong>PA</strong><input type="text" name="bloodPressure" placeholder="___x___ mmHg" /></label>
+            <div>
+              <strong style="display: block; margin-bottom: 0.45rem;">PA (mmHg)</strong>
+              <div class="bp-fields" role="group" aria-label="Pressão arterial em mmHg">
+                <input type="number" id="bpSystolic" min="0" max="300" step="1" inputmode="numeric" placeholder="Sistólica" aria-label="Pressão sistólica" />
+                <span aria-hidden="true">x</span>
+                <input type="number" id="bpDiastolic" min="0" max="300" step="1" inputmode="numeric" placeholder="Diastólica" aria-label="Pressão diastólica" />
+              </div>
+              <!-- Valor gravado ("120x80"), montado a partir dos dois campos acima. -->
+              <input type="text" name="bloodPressure" hidden />
+            </div>
             <label><strong>IMC</strong><input type="text" name="bmi" readonly tabindex="-1" placeholder="Calculado por peso e altura" /></label>
 
             <div>
@@ -107,7 +116,7 @@
               </div>
             </div>
 
-            <label><strong>Escala de dor</strong><input type="text" name="painScale" /></label>
+            <label><strong>Escala de dor (0 a 10)</strong><input type="number" name="painScale" min="0" max="10" step="1" inputmode="numeric" /></label>
 
             <div>
               <strong style="display: block; margin-bottom: 5px;">Momento</strong>
@@ -119,7 +128,7 @@
               </div>
             </div>
 
-            <label><strong>Histerometria (cm)</strong><input type="text" name="hysterometry" /></label>
+            <label><strong>Histerometria (cm)</strong><input type="number" name="hysterometry" min="0" max="30" step="0.1" inputmode="decimal" /></label>
 
             <div>
               <strong style="display: block; margin-bottom: 5px;">Uso de analgesia</strong>

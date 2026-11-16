@@ -14,6 +14,8 @@ import { showToast, setFlashMessage, getRecordDisplayName } from "./ui.js";
 import {
   collectFormData,
   restoreFormData,
+  setupBloodPressure,
+  setupExclusiveOption,
   normalizeTypedFields,
   setupAutoCalculations,
   setupRadioDeselect,
@@ -385,6 +387,19 @@ setupDraftFlush(autoSaver);
   await runMigrations();
   await loadCurrentFormState();
   setupAutoCalculations(form);
+  setupBloodPressure(form);
   setupRadioDeselect(form);
+
+  // Gel, spray e injetável podem ser usados juntos; só "Não foi utilizado" exclui os demais.
+  setupExclusiveOption(
+    form.querySelector('[name="analgesiaNotUsed"]'),
+    ["analgesiaGel", "analgesiaSpray", "analgesiaInjectable"].map((name) => form.querySelector(`[name="${name}"]`))
+  );
+  const intercurrences = Array.from(form.querySelectorAll('[name="intercurrences"]'));
+  setupExclusiveOption(
+    intercurrences.find((option) => option.value === "Sem intercorrências"),
+    intercurrences.filter((option) => option.value !== "Sem intercorrências")
+  );
+
   registerServiceWorker();
 })();

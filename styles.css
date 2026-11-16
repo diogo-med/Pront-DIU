@@ -334,6 +334,17 @@ label,
   font-weight: 500;
 }
 
+/* PA: sistólica x diastólica lado a lado. */
+.bp-fields {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bp-fields input {
+  min-width: 0;
+}
+
 .inline-field {
   display: grid;
   gap: 0.35rem;
