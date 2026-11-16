@@ -69,7 +69,9 @@ function exportTriagemJson(record) {
 }
 
 function exportRecordCsv(record) {
-  const fileId = getRecordNumber(record) || String(record.id ?? "").slice(0, 8) || "registro";
+  // O número do prontuário pode ter letras e símbolos; no nome do arquivo ficam só letras, números, "-" e "_".
+  const safeNumber = getRecordNumber(record).replace(/[^\p{L}\p{N}_-]+/gu, "_");
+  const fileId = safeNumber || String(record.id ?? "").slice(0, 8) || "registro";
   return exportFile(
     buildAnonymizedCsv([record]),
     `prontuario_${fileId}_anonimizado.csv`,

@@ -1,4 +1,7 @@
-const INTEGER_FIELDS = ["recordNumber", "rg", "cpf", "cns", "phone"];
+// Campos gravados só com dígitos (a máscara é apenas visual).
+const INTEGER_FIELDS = ["cpf", "cns", "phone"];
+// Campos de texto livre que podem ter letras (ex.: RG terminado em "X"); só os espaços das pontas saem.
+const TRIMMED_FIELDS = ["recordNumber", "rg", "patientName"];
 
 export function getFieldValue(field) {
   if (field.type === "checkbox") {
@@ -84,8 +87,10 @@ export function normalizeTypedFields(data) {
     }
   }
 
-  if ("patientName" in normalized) {
-    normalized.patientName = String(normalized.patientName ?? "").trim();
+  for (const field of TRIMMED_FIELDS) {
+    if (field in normalized) {
+      normalized[field] = String(normalized[field] ?? "").trim();
+    }
   }
 
   return normalized;
